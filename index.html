@@ -212,7 +212,7 @@ ul.clean{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:5px}
 .ccol-h{border-radius:var(--r);padding:12px 14px;color:#fff;display:flex;flex-direction:column;gap:3px}
 .ccol-h h3{color:#fff;font-size:18px}
 .ccol-h p{font-size:12.5px;color:rgba(255,255,255,.9)}
-.c-clarity{background:#7B62DF}.c-coaching{background:#B8521F}.c-create{background:#372875}.c-collab{background:#3F3A4A}
+.c-clarity{background:#6D4FD6}.c-coaching{background:#15803D}.c-create{background:#C2410C}.c-collab{background:#0369A1}
 .habit{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:12px;display:flex;flex-direction:column;gap:7px;min-width:0}
 .habit h4{font-size:14.5px}
 .mode{font-size:11px;font-weight:700;color:var(--accent)}
@@ -263,10 +263,61 @@ ul.clean{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:5px}
 .tier .lvl{font-family:var(--f-display);font-weight:700;font-size:16px;color:var(--deep)}
 .tier.hot{border-color:var(--coral);background:var(--coral-soft)}
 
+/* AI basics */
+.duo{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.mode-card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.mode-card .badge{align-self:flex-start;font-size:12px;font-weight:700;border-radius:999px;padding:3px 10px;color:#fff}
+.loop{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:12.5px;font-weight:600}
+.loop span{background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:4px 10px}
+.loop i{font-style:normal;color:var(--muted)}
+.spectrum{position:relative;padding:8px 0 0}
+.spec-bar{height:40px;border-radius:999px;background:linear-gradient(90deg,#3B6FD4,#7B62DF 50%,#B44CC4);display:flex;justify-content:space-between;align-items:center;padding:0 18px;color:#fff;font-weight:700;font-size:14px}
+.spec-cols{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:-20px;padding:0 4%}
+.spec-col{border-radius:16px;padding:0 16px 16px;display:flex;flex-direction:column;gap:8px;align-items:center;text-align:center;min-width:0}
+.spec-col:nth-child(1){background:rgba(59,111,212,.12)}
+.spec-col:nth-child(2){background:rgba(123,98,223,.14);padding-top:14px;margin-top:-14px}
+.spec-col:nth-child(3){background:rgba(180,76,196,.14);padding-top:28px;margin-top:-28px}
+.spec-dot{width:56px;height:56px;border-radius:50%;background:var(--panel);border:3px solid var(--line);display:grid;place-items:center;font-size:24px;margin-top:-8px;box-shadow:0 4px 14px rgba(0,0,0,.08)}
+.spec-col h3{font-size:18px}
+.spec-col p{font-size:13.5px;color:var(--muted)}
+.spec-col .tags{justify-content:center}
+.spec-foot{text-align:center;font-size:13px;color:var(--muted);margin-top:10px}
+.create-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.cr{display:grid;grid-template-columns:52px minmax(0,1fr);gap:14px;align-items:start;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;cursor:pointer;text-align:left;color:var(--ink);font:inherit;width:100%}
+.cr:hover,.cr[aria-pressed="true"]{border-color:var(--cc)}
+.cr .lt{width:52px;height:52px;border-radius:12px;background:var(--cc);color:#fff;display:grid;place-items:center;font-family:var(--f-display);font-size:24px;font-weight:800}
+.cr b{font-size:16px;font-family:var(--f-display);color:var(--deep)}
+.cr p{font-size:13.5px;color:var(--muted)}
+.cr q{display:block;font-style:italic;font-size:13.5px;color:var(--cc);margin-top:3px;quotes:none}
+:root[data-theme="dark"] .cr q{filter:brightness(1.35)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .cr q{filter:brightness(1.35)}}
+.assembled{font-family:var(--f-mono);font-size:12.5px;line-height:1.7;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px;white-space:pre-wrap}
+.assembled span{border-radius:4px;padding:1px 2px;transition:background-color .2s}
+.assembled span.on{background:var(--coral-soft);outline:1.5px solid var(--coral)}
+.weak{background:var(--coral-soft);border-radius:10px;padding:12px 14px;font-size:14px}
+
+/* personal AI OS */
+.os{background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:28px 28px;background-color:var(--bg);border:1px solid var(--line);border-radius:18px;padding:clamp(18px,3vw,32px);display:flex;flex-direction:column;gap:18px;align-items:center;text-align:center}
+.os h2{font-size:clamp(24px,3.2vw,34px);font-weight:800;color:var(--ink)}
+.os > p{font-size:16px;color:var(--muted);max-width:56ch}
+.os-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;width:100%;max-width:880px}
+.osc{background:var(--panel);border-radius:10px;box-shadow:0 10px 28px rgba(30,20,60,.12);overflow:hidden;text-align:left;display:flex;flex-direction:column}
+.osc .top{height:12px;background:var(--oc);box-shadow:0 0 16px var(--oc)}
+.osc .in{padding:14px;display:flex;flex-direction:column;gap:6px;flex:1}
+.osc svg{width:28px;height:28px}
+.osc h3{font-family:var(--f-body);font-size:15px;font-weight:800;letter-spacing:.02em;text-transform:uppercase;color:var(--ink)}
+.osc p{font-size:12.5px;color:var(--muted)}
+.osc .st{font-size:12px;color:var(--ink);margin-top:auto;padding-top:8px}
+.osc .pb{height:5px;border-radius:3px;background:color-mix(in srgb,var(--oc) 22%,transparent);overflow:hidden}
+.osc .pb i{display:block;height:100%;width:72%;background:var(--oc);border-radius:3px;animation:fill 4s ease-in-out infinite alternate}
+.osc:nth-child(2) .pb i{animation-delay:-1s}.osc:nth-child(3) .pb i{animation-delay:-2s}.osc:nth-child(4) .pb i{animation-delay:-3s}
+@keyframes fill{from{width:35%}to{width:88%}}
+.os-ver{font-size:12.5px;color:var(--muted);background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:4px 10px}
+
 .toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:#372875;color:#fff;padding:8px 14px;border-radius:8px;font-size:13px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:50}
 .toast.show{opacity:1}
 
-@media (max-width:1100px){.qgrid,.g4,.g5,.rulechips,.steps4,.flow{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:1100px){.os-grid,.create-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.qgrid,.g4,.g5,.rulechips,.steps4,.flow{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media (max-width:900px){
   .shell{grid-template-columns:minmax(0,1fr)}
   .rail{position:sticky;top:env(safe-area-inset-top,0px);height:auto;z-index:15;flex-direction:row;align-items:center;gap:10px;padding:10px max(16px,env(safe-area-inset-right,0px)) 10px max(16px,env(safe-area-inset-left,0px));border-right:0;border-bottom:1px solid var(--line);overflow-x:auto}
@@ -275,12 +326,13 @@ ul.clean{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:5px}
   .navwrap{display:flex;gap:2px}
   .navgroup{flex-direction:row}
   .nav a{white-space:nowrap;padding:6px 9px;font-size:13.5px}
-  .ucgrid,.g3,.hero,.mgrid,.lanes{grid-template-columns:minmax(0,1fr)}
+  .ucgrid,.g3,.hero,.mgrid,.lanes,.duo,.create-grid{grid-template-columns:minmax(0,1fr)}
+  .spec-cols{grid-template-columns:minmax(0,1fr);margin-top:12px;padding:0}.spec-col:nth-child(n){margin-top:0;padding-top:14px}
   .sim-body{grid-template-columns:minmax(0,1fr)}
   .canvas{border-right:0;border-bottom:1px solid var(--line)}
   main{padding-block:22px 60px}
 }
-@media (max-width:620px){.modal-head{top:calc(-1 * max(24px,env(safe-area-inset-top,0px)))}.g2,.g4,.g5,.qgrid,.rulechips,.steps4,.flow{grid-template-columns:minmax(0,1fr)}.slides{grid-template-columns:repeat(2,minmax(0,1fr))}.shift{grid-template-columns:minmax(0,1fr)}.shift .arr{display:none}.modal{padding-inline:8px}}
+@media (max-width:620px){.os-grid{grid-template-columns:minmax(0,1fr)}.modal-head{top:calc(-1 * max(24px,env(safe-area-inset-top,0px)))}.g2,.g4,.g5,.qgrid,.rulechips,.steps4,.flow{grid-template-columns:minmax(0,1fr)}.slides{grid-template-columns:repeat(2,minmax(0,1fr))}.shift{grid-template-columns:minmax(0,1fr)}.shift .arr{display:none}.modal{padding-inline:8px}}
 @media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
 </style>
 </head><body>
@@ -294,6 +346,7 @@ ul.clean{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:5px}
       <div class="navgroup"><span class="eyebrow">Start</span>
         <a href="#overview"><span class="em">🏠</span>Overview</a>
         <a href="#licences"><span class="em">🎟️</span>Licence plan</a>
+        <a href="#basics"><span class="em">🧠</span>AI basics</a>
       </div>
       <div class="navgroup"><span class="eyebrow">Focus areas</span>
         <a href="#finance"><span class="em">💰</span>Finance<span class="pill">Focus</span></a>
@@ -393,6 +446,47 @@ ul.clean{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:5px}
     <div><button class="btn" type="button" data-more="licencecompare">🔍 Licensed vs Copilot Chat: what's the difference?</button></div>
   </div>
 
+
+  <!-- ============================================================ AI BASICS -->
+  <div class="page" data-page="basics" hidden>
+    <div class="page-head"><span class="eyebrow">🧠 AI basics</span><h1>Three ideas before we build anything</h1>
+      <p class="lede">Assistive vs agentic AI, the agent spectrum, and how to write a prompt that works first time.</p></div>
+
+    <section class="block">
+      <div class="sec-head"><h2>🤝 Assistive AI vs 🤖 agentic AI</h2><button class="btn ghost" type="button" data-more="aivs">Compare side by side →</button></div>
+      <div class="duo">
+        <div class="mode-card"><span class="badge" style="background:#3B6FD4">🤝 Assistive</span><h3>You ask. It helps. You decide.</h3><p class="muted small">One step at a time, inside the app you're using. You stay in control of every step.</p>
+          <div class="loop"><span>🙋 You prompt</span><i>→</i><span>✨ AI drafts</span><i>→</i><span>✅ You decide</span></div>
+          <div class="tags"><span class="tag">📝 Word drafts a donor narrative</span><span class="tag">📊 Excel flags variances</span><span class="tag">📧 Outlook summarises a thread</span></div></div>
+        <div class="mode-card"><span class="badge" style="background:#9B3FB8">🤖 Agentic</span><h3>You set a goal. It plans and acts.</h3><p class="muted small">Several steps, using tools and knowledge, checking in with you at set points.</p>
+          <div class="loop"><span>🎯 Goal</span><i>→</i><span>🗺️ Plan</span><i>→</i><span>⚙️ Act</span><i>→</i><span>🔍 Check</span><i>→</i><span>📤 Report</span></div>
+          <div class="tags"><span class="tag">🔭 Researcher reads 40+ sources</span><span class="tag">🔬 Analyst writes and runs Python</span><span class="tag">📆 Month-End agent runs 5 checks</span></div></div>
+      </div>
+      <p class="muted small">🧑‍⚖️ At Insights, both need a <span class="tip" tabindex="0" data-tip="A named person reviews the output, and approves any action, before it leaves the organisation or changes a record.">human in the loop</span>. Agentic doesn't mean unsupervised.</p>
+    </section>
+
+    <section class="block">
+      <div class="sec-head"><h2>🤖 What are agents?</h2><span class="muted small">They use AI to run a process alongside, or on behalf of, a person or team.</span></div>
+      <div class="spectrum">
+        <div class="spec-bar"><span>Simple</span><span>Advanced</span></div>
+        <div class="spec-cols">
+          <div class="spec-col"><span class="spec-dot">💬</span><h3>Retrieval</h3><p>Answers questions from a fixed set of documents, with sources.</p><div class="tags"><span class="tag">📚 SLB Knowledge</span><span class="tag">💬 Finance Helpdesk</span><span class="tag">📜 Grant Compliance</span></div><span class="tag good">✅ Now · Studio Lite</span></div>
+          <div class="spec-col"><span class="spec-dot">📋</span><h3>Task</h3><p>Does a defined job when asked: analyse, draft, check, route.</p><div class="tags"><span class="tag">📆 Month-End Close</span><span class="tag">🗣️ Comms &amp; Translation</span><span class="tag">✍️ Proposal Builder</span></div><span class="tag">📈 Q2 · Studio Lite + Power Automate</span></div>
+          <div class="spec-col"><span class="spec-dot">⚙️</span><h3>Autonomous</h3><p>Runs on a trigger or schedule, plans its own steps and acts, with approval points.</p><div class="tags"><span class="tag tip" tabindex="0" data-tip="Example: every Monday it reads the grant calendar, drafts reminders for anything due in 30 days and sends them to Rajitha for approval.">⏰ Deadline Watcher</span><span class="tag">🌐 Ask the Barometer</span></div><span class="tag coral">🚀 Q4 · Copilot Studio, guarded</span></div>
+        </div>
+        <p class="spec-foot">⟵ Start simple. Move right only when the simpler agent is trusted and used. ⟶</p>
+      </div>
+    </section>
+
+    <section class="block">
+      <div class="sec-head"><h2>✍️ Prompt engineering: the CREATE framework</h2><span class="muted small">Tap a letter to see it in the prompt below</span></div>
+      <div class="create-grid" id="create-grid"></div>
+      <div class="duo">
+        <div class="box"><h4>❌ Weak prompt</h4><p class="weak">"Write the variance section of the donor report."</p><p class="small muted">No role, no data, no rules, no format. Copilot has to guess, and you rewrite it.</p><p class="small muted">⏱ Short on time? This playbook also uses the 4-part version: <span class="tip" tabindex="0" data-tip="Goal (Request) · Context (Character + Adjustments) · Source (Extras) · Expectations (Type of output + Examples). Same idea, fewer boxes.">Goal · Context · Source · Expectations</span>.</p></div>
+        <div class="box"><div class="prompt-bar"><h4>✅ CREATE prompt</h4><button class="btn" type="button" data-copy="create-full">Copy</button></div><div class="assembled" id="p-create-full"></div></div>
+      </div>
+    </section>
+  </div>
   <!-- ============================================================ FINANCE / LEADERSHIP / RESEARCH -->
   <div class="page" data-page="finance" hidden>
     <div class="page-head"><span class="eyebrow">💰 Focus area</span><h1>Finance &amp; grants</h1>
@@ -432,6 +526,18 @@ ul.clean{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:5px}
   <div class="page" data-page="habits" hidden>
     <div class="page-head"><span class="eyebrow">🧭 Personal use cases</span><h1>The 4C habits</h1>
       <p class="lede">Pick one habit per C. Practise it for two weeks.</p></div>
+    <section class="os">
+      <h2>Your personal AI operating system</h2>
+      <p>Four habits that run in the background of your week, so you can focus on the work only you can do.</p>
+      <div class="os-grid">
+        <div class="osc" style="--oc:#6D4FD6"><span class="top"></span><div class="in"><svg viewBox="0 0 24 24" fill="none" stroke="#6D4FD6" stroke-width="1.8"><ellipse cx="12" cy="12" rx="10" ry="6.5"/><circle cx="12" cy="12" r="3.2"/><circle cx="12" cy="12" r="1.2" fill="#6D4FD6"/></svg><h3>Clarity</h3><p>🔭 Zoom out across everything. 🔬 Zoom in on one thing.</p><span class="st">Organising 7 days of email…</span><span class="pb"><i></i></span></div></div>
+        <div class="osc" style="--oc:#15803D"><span class="top"></span><div class="in"><svg viewBox="0 0 24 24" fill="none" stroke="#15803D" stroke-width="1.8"><circle cx="12" cy="12" r="9.5"/><path d="M15.5 8.5l-2 5-5 2 2-5z" fill="#15803D" stroke-linejoin="round"/></svg><h3>Coaching</h3><p>A thinking partner that challenges and rehearses with you.</p><span class="st">Calibrating board questions…</span><span class="pb"><i></i></span></div></div>
+        <div class="osc" style="--oc:#C2410C"><span class="top"></span><div class="in"><svg viewBox="0 0 24 24" fill="none" stroke="#C2410C" stroke-width="1.8"><path d="M12 2.8a9.2 9.2 0 1 0 0 18.4c1.3 0 1.8-1 1.3-2-.6-1.3.3-2.6 1.7-2.6h2.2a4 4 0 0 0 4-4C21.2 7 17.1 2.8 12 2.8z"/><circle cx="7.5" cy="11" r="1.2" fill="#C2410C"/><circle cx="10.5" cy="7" r="1.2" fill="#C2410C"/><circle cx="15" cy="7.5" r="1.2" fill="#C2410C"/></svg><h3>Create</h3><p>Strong first drafts from your own sources.</p><span class="st">Drafting the donor narrative…</span><span class="pb"><i></i></span></div></div>
+        <div class="osc" style="--oc:#0369A1"><span class="top"></span><div class="in"><svg viewBox="0 0 24 24" fill="none" stroke="#0369A1" stroke-width="1.8"><circle cx="8" cy="9" r="3"/><circle cx="16.5" cy="10" r="2.5"/><path d="M2.5 19c.6-3 2.8-4.6 5.5-4.6s4.9 1.6 5.5 4.6M13.5 15.3c.9-.6 1.9-.9 3-.9 2.3 0 4.2 1.4 4.8 4"/></svg><h3>Collaboration</h3><p>Meetings become actions; partners stay in the loop.</p><span class="st">Turning meetings into actions…</span><span class="pb"><i></i></span></div></div>
+      </div>
+      <span class="os-ver">Insights · personal AI OS · v1.0</span>
+    </section>
+
     <div class="filters" role="group" aria-label="Filter habits by person">
       <button class="fbtn" type="button" data-person="all" aria-pressed="true">Everyone</button>
       <button class="fbtn" type="button" data-person="Natasha" aria-pressed="false">Natasha</button>
@@ -906,6 +1012,24 @@ document.addEventListener('click',function(e){
   var mo=e.target.closest('[data-more]');if(mo){openThing('more:'+mo.getAttribute('data-more'));return;}
   var qm=e.target.closest('[data-q]');if(qm){openThing('q:'+qm.getAttribute('data-q'));}
 });
+
+
+/* ---------------------------------------------------------------- CREATE framework */
+var CREATE=[
+ {k:"C",n:"Character",d:"Tell the AI what role to play.",c:"#4A7BC8",ex:"You are an experienced grant finance manager at an EU-funded research non-profit."},
+ {k:"R",n:"Request",d:"State the main task clearly.",c:"#E08A2E",ex:"Draft the budget variance explanation for our interim donor report."},
+ {k:"E",n:"Examples",d:"Show a sample of what you want.",c:"#7A4FC2",ex:"Match this tone: \"Fieldwork spend is below plan because permissions in two districts were delayed; we expect to catch up by January.\""},
+ {k:"A",n:"Adjustments",d:"Add rules, point of view or style.",c:"#3E9A6E",ex:"Only explain lines more than 10% over or under. Neutral, factual tone. Never invent a reason: write [REASON NEEDED]."},
+ {k:"T",n:"Type of output",d:"Say how to format the result.",c:"#D2603F",ex:"A table (Line | Variance % | Reason | Corrective action), then a 100-word summary."},
+ {k:"E2",n:"Extras",d:"Give background, data or reference files.",c:"#6B7280",ex:"Use /Sample_Grant_Budget_ANON.xlsx. We are 10 months into the year, so expected spend is 83.3%."}];
+var cg=document.getElementById('create-grid'),asm=document.getElementById('p-create-full');
+cg.innerHTML=CREATE.map(function(x){return '<button class="cr" type="button" style="--cc:'+x.c+'" data-cr="'+x.k+'" aria-pressed="false"><span class="lt">'+x.k.charAt(0)+'</span><span><b>'+x.n+' ('+x.k.charAt(0)+')</b><p>'+x.d+'</p><q>'+esc(x.ex)+'</q></span></button>';}).join('');
+asm.innerHTML=CREATE.map(function(x){return '<span data-part="'+x.k+'">'+esc(x.ex)+'</span>';}).join('\n\n');
+PROMPTS['create-full']=CREATE.map(function(x){return x.ex;}).join('\n\n');
+cg.addEventListener('click',function(e){var b=e.target.closest('.cr');if(!b)return;var k=b.getAttribute('data-cr'),on=b.getAttribute('aria-pressed')!=='true';
+  [].forEach.call(cg.children,function(x){x.setAttribute('aria-pressed',x===b&&on?'true':'false');});
+  [].forEach.call(asm.children,function(sp){sp.classList.toggle('on',on&&sp.getAttribute('data-part')===k);});});
+MORE.aivs={t:"🤝 Assistive vs 🤖 agentic AI",h:'<div class="tbl-wrap"><table><thead><tr><th></th><th>🤝 Assistive</th><th>🤖 Agentic</th></tr></thead><tbody><tr><td><b>Who drives</b></td><td>You, step by step</td><td>The agent, towards a goal you set</td></tr><tr><td><b>Steps</b></td><td>One prompt, one result</td><td>Plans and runs several steps</td></tr><tr><td><b>Tools</b></td><td>The app you\'re in</td><td>Search, files, code, flows, other apps</td></tr><tr><td><b>Your role</b></td><td>Review every output</td><td>Set the goal, approve at checkpoints, review the result</td></tr><tr><td><b>Risk</b></td><td>Low: nothing happens without you</td><td>Higher: needs clear limits, logs and approval steps</td></tr><tr><td><b>At Insights</b></td><td>Copilot in Word, Excel, Outlook, Teams</td><td>Researcher, Analyst, our 17 agents, Power Automate flows</td></tr></tbody></table></div>'};
 
 /* ---------------------------------------------------------------- 4C habits */
 var C=[{k:"clarity",name:"🔭 Clarity",d:"Telescopic: zoom out. Microscopic: zoom in.",cls:"c-clarity"},{k:"coaching",name:"🧑‍🏫 Coaching",d:"Feedback, rehearsal, challenge.",cls:"c-coaching"},{k:"create",name:"✍️ Create",d:"First drafts from your sources.",cls:"c-create"},{k:"collab",name:"🤝 Collaboration",d:"Meetings, follow-ups, partners.",cls:"c-collab"}];
