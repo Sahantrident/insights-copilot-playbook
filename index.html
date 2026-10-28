@@ -314,6 +314,9 @@ ul.clean{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:5px}
 @keyframes fill{from{width:35%}to{width:88%}}
 .os-ver{font-size:12.5px;color:var(--muted);background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:4px 10px}
 
+.logcard .big{font-size:30px;line-height:1}
+.logcard .btn[aria-disabled="true"]{opacity:.55;cursor:not-allowed}
+.formframe{width:100%;height:min(70vh,720px);border:1px solid var(--line);border-radius:12px;background:#fff}
 .toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:#372875;color:#fff;padding:8px 14px;border-radius:8px;font-size:13px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:50}
 .toast.show{opacity:1}
 
@@ -362,6 +365,7 @@ ul.clean{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:5px}
         <a href="#roadmap"><span class="em">🗺️</span>Roadmap</a>
         <a href="#governance"><span class="em">🛡️</span>Data safety</a>
         <a href="#nextsteps"><span class="em">✅</span>Next steps</a>
+        <a href="#log"><span class="em">📝</span>Notes &amp; log</a>
       </div>
     </nav>
     <div class="rail-foot">
@@ -638,6 +642,31 @@ ul.clean{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:5px}
     </div>
   </div>
 
+
+  <!-- ============================================================ NOTES & LOG -->
+  <div class="page" data-page="log" hidden>
+    <div class="page-head"><span class="eyebrow">📝 Shared record</span><h1>Notes, feedback &amp; activity log</h1>
+      <p class="lede">One shared Excel in OneDrive holds everything, so Insights and Trident see the same record. Excel for the web saves every entry automatically.</p></div>
+    <div class="grid g3">
+      <div class="panel logcard"><span class="big">✍️</span><h3>Add a note</h3><p class="muted small">Your name, the topic and your key takeaway. Takes 1 minute.</p><div class="actions" id="log-notes"></div></div>
+      <div class="panel logcard"><span class="big">🗂️</span><h3>Log an activity</h3><p class="muted small">A training, demo, coaching chat, use case piloted, agent built or new finding.</p><div class="actions" id="log-activity"></div></div>
+      <div class="panel logcard"><span class="big">📊</span><h3>See the shared log</h3><p class="muted small">All notes and activities in one Excel workbook, visible to both teams.</p><div class="actions" id="log-excel"></div></div>
+    </div>
+    <section class="block">
+      <h2>What to capture</h2>
+      <div class="tags">
+        <span class="tag tip" tabindex="0" data-tip="One sentence you'd tell a colleague: what clicked, what surprised you.">💡 Key takeaways</span>
+        <span class="tag tip" tabindex="0" data-tip="The prompt or habit you'll try this week, and where.">🎯 What I'll try next</span>
+        <span class="tag tip" tabindex="0" data-tip="Trainings, demos, check-ins and coaching chats, with who attended (roles).">🎓 Sessions held</span>
+        <span class="tag tip" tabindex="0" data-tip="A use case that worked, with an estimate of hours saved per week.">⏱ Time saved</span>
+        <span class="tag tip" tabindex="0" data-tip="Something Copilot did well or badly, or a new idea for a use case or agent.">🔍 New findings</span>
+        <span class="tag tip" tabindex="0" data-tip="Anything stopping progress: licences, permissions, data, skills.">🚧 Blockers</span>
+        <span class="tag tip" tabindex="0" data-tip="Decisions taken, such as approving the AI policy or choosing the next agent.">✅ Decisions</span>
+      </div>
+      <p class="muted small">🙈 Never record respondent data, salaries, bank details or confidential donor terms. Describe issues by role, not by other people's names.</p>
+    </section>
+    <div><button class="btn" type="button" data-more="logsetup">⚙️ How the shared log is set up</button></div>
+  </div>
   </main>
 </div>
 
@@ -1032,6 +1061,27 @@ cg.addEventListener('click',function(e){var b=e.target.closest('.cr');if(!b)retu
   [].forEach.call(cg.children,function(x){x.setAttribute('aria-pressed',x===b&&on?'true':'false');});
   [].forEach.call(asm.children,function(sp){sp.classList.toggle('on',on&&sp.getAttribute('data-part')===k);});});
 MORE.aivs={t:"🤝 Assistive vs 🤖 agentic AI",h:'<div class="tbl-wrap"><table><thead><tr><th></th><th>🤝 Assistive</th><th>🤖 Agentic</th></tr></thead><tbody><tr><td><b>Who drives</b></td><td>You, step by step</td><td>The agent, towards a goal you set</td></tr><tr><td><b>Steps</b></td><td>One prompt, one result</td><td>Plans and runs several steps</td></tr><tr><td><b>Tools</b></td><td>The app you\'re in</td><td>Search, files, code, flows, other apps</td></tr><tr><td><b>Your role</b></td><td>Review every output</td><td>Set the goal, approve at checkpoints, review the result</td></tr><tr><td><b>Risk</b></td><td>Low: nothing happens without you</td><td>Higher: needs clear limits, logs and approval steps</td></tr><tr><td><b>At Insights</b></td><td>Copilot in Word, Excel, Outlook, Teams</td><td>Researcher, Analyst, our 17 agents, Power Automate flows</td></tr></tbody></table></div>'};
+
+
+/* ---------------------------------------------------------------- shared log (OneDrive Excel + optional Microsoft Forms) */
+var LOG={
+  excel:"",          // OneDrive share link to Insights_Copilot_Adoption_Log.xlsx
+  notesForm:"",      // Microsoft Forms link: Add a note
+  activityForm:""    // Microsoft Forms link: Log an activity
+};
+function logBtn(url,label,cls,embed){
+  if(!url)return '<span class="btn" aria-disabled="true">🔗 Link coming soon</span>';
+  var b='<a class="btn '+(cls||'')+'" href="'+esc(url)+'" target="_blank" rel="noopener">'+label+' ↗</a>';
+  if(embed)b='<button class="btn primary" type="button" data-form="'+embed+'">'+label+'</button><a class="btn ghost" href="'+esc(url)+'" target="_blank" rel="noopener">Open in new tab ↗</a>';
+  return b;
+}
+document.getElementById('log-notes').innerHTML=LOG.notesForm?logBtn(LOG.notesForm,'✍️ Add a note','primary','notesForm'):logBtn(LOG.excel,'Open the Notes sheet','primary');
+document.getElementById('log-activity').innerHTML=LOG.activityForm?logBtn(LOG.activityForm,'🗂️ Log an activity','primary','activityForm'):logBtn(LOG.excel,'Open the Activity sheet','primary');
+document.getElementById('log-excel').innerHTML=logBtn(LOG.excel,'📊 Open shared Excel','primary');
+document.addEventListener('click',function(e){var f=e.target.closest('[data-form]');if(!f)return;var k=f.getAttribute('data-form');var u=LOG[k];
+  var src=u+(u.indexOf('?')>-1?'&':'?')+'embed=true';
+  openModal(k==='notesForm'?'✍️ Add a note':'🗂️ Log an activity','<span class="tag">Saves to the shared Excel</span>','<iframe class="formframe" src="'+esc(src)+'" title="Microsoft Form"></iframe><p class="small muted">Form not loading? <a href="'+esc(u)+'" target="_blank" rel="noopener">Open it in a new tab ↗</a></p>');});
+MORE.logsetup={t:"⚙️ How the shared log is set up",h:'<div class="steps4"><div class="fstep"><span class="big">⬇️</span><b>1. Template</b><span>Download the Excel template: Notes &amp; Feedback, Activity Log, dropdown lists and form questions.</span></div><div class="fstep"><span class="big">☁️</span><b>2. OneDrive</b><span>Trident uploads it to OneDrive and shares it with Insights (can edit).</span></div><div class="fstep"><span class="big">📋</span><b>3. Forms (optional)</b><span>In Excel for the web: Insert → Forms → New Form. Responses land in the same workbook.</span></div><div class="fstep"><span class="big">🔗</span><b>4. Linked here</b><span>The workbook and form links are added to this page.</span></div></div><div class="actions"><a class="btn primary" href="https://sahantrident.github.io/insights-copilot-playbook/downloads/Insights_Copilot_Adoption_Log.xlsx" download>⬇️ Download the Excel template</a></div><p class="small muted">Because Insights and Trident are separate organisations, forms are set to "Anyone can respond" and ask for your name.</p>'};
 
 /* ---------------------------------------------------------------- 4C habits */
 var C=[{k:"clarity",name:"🔭 Clarity",d:"Telescopic: zoom out. Microscopic: zoom in.",cls:"c-clarity"},{k:"coaching",name:"🧑‍🏫 Coaching",d:"Feedback, rehearsal, challenge.",cls:"c-coaching"},{k:"create",name:"✍️ Create",d:"First drafts from your sources.",cls:"c-create"},{k:"collab",name:"🤝 Collaboration",d:"Meetings, follow-ups, partners.",cls:"c-collab"}];
