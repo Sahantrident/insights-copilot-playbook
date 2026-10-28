@@ -1,4 +1,7 @@
 INSIGHTS INITIATIVE – COPILOT DEMO DATA PACK
+
+>>> NEW TO COPILOT? Open 00_START_HERE_Copilot_Coach.md first. It sets Copilot up as
+>>> your personal coach and walks you through 10 short practice missions.
 All files are FICTIONAL sample data made for a Microsoft 365 Copilot demo.
 No real Insights, donor, partner or respondent data. Safe to show on screen.
 
@@ -6,6 +9,8 @@ BEFORE THE DEMO: upload all files to OneDrive (Copilot in Excel/Word needs
 files saved in OneDrive or SharePoint). Use "/" in Copilot to pick a file.
 
 FILE                                 USE IN DEMO
+00_START_HERE_Copilot_Coach.md       Self-learning: coach prompt, 10 missions, progress tracker
+Insights_Copilot_Discovery_Prompt.md Run in Copilot Chat (Work) for your personal opportunity dashboard
 Sample_Grant_Budget_ANON.xlsx        Finance – budget vs actual, variances, pivot,
                                      shared-cost allocation, cash flow, ledger checks
 Donor_Report_Template_SAMPLE.docx    Finance – draft financial summary + variance narrative
