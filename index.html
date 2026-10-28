@@ -1,0 +1,990 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Insights Copilot Playbook</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+html{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}[hidden]{display:none!important}
+/* Layout: fixed left rail (brand + page nav) beside one scrolling column of short, card-based pages; details live in pop-ups and tooltips. */
+:root{
+  --bg:#FBFAFE; --surface:#F4F2FB; --panel:#FFFFFF; --ink:#2F2B36; --muted:#6A6478; --line:#E5E1F1;
+  --accent:#7B62DF; --accent-ink:#FFFFFF; --deep:#372875; --coral:#FA854F; --coral-soft:#FDE3D6; --accent-soft:#ECE8FB;
+  --good:#1F8A5B; --good-soft:#DDF3E8; --shade:rgba(30,20,60,.45); --tipbg:#2F2B36; --tipfg:#FFFFFF;
+  --f-display:"Bricolage Grotesque","Helvetica Neue",Arial,sans-serif;
+  --f-body:"Instrument Sans",-apple-system,"Segoe UI","Helvetica Neue",Arial,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+  --r:12px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#15121D; --surface:#1D1928; --panel:#231F31; --ink:#ECE9F4; --muted:#A39CB6; --line:#363047;
+  --accent:#9D89F2; --accent-ink:#15121D; --deep:#CFC5FF; --coral:#FF9C6E; --coral-soft:#3D2519; --accent-soft:#2C2545;
+  --good:#5CCB98; --good-soft:#18352A; --shade:rgba(0,0,0,.6); --tipbg:#ECE9F4; --tipfg:#15121D; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#15121D; --surface:#1D1928; --panel:#231F31; --ink:#ECE9F4; --muted:#A39CB6; --line:#363047;
+  --accent:#9D89F2; --accent-ink:#15121D; --deep:#CFC5FF; --coral:#FF9C6E; --coral-soft:#3D2519; --accent-soft:#2C2545;
+  --good:#5CCB98; --good-soft:#18352A; --shade:rgba(0,0,0,.6); --tipbg:#ECE9F4; --tipfg:#15121D; color-scheme:dark}
+*{box-sizing:border-box}
+html,body{background:var(--bg);color:var(--ink)}
+body{font-family:var(--f-body);font-size:15.5px;line-height:1.55}
+body.locked{overflow:hidden}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--coral);outline-offset:2px}
+h1,h2,h3,h4{font-family:var(--f-display);color:var(--deep);text-wrap:balance;line-height:1.15;margin:0}
+h1{font-size:clamp(28px,4vw,44px);font-weight:800;letter-spacing:-.02em}
+h2{font-size:clamp(20px,2.4vw,26px);font-weight:700}
+h3{font-size:17px;font-weight:700}
+p{margin:0}
+button{font:inherit}
+.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.09em;font-weight:600;color:var(--accent)}
+.muted{color:var(--muted)}
+.small{font-size:13px}
+.tag{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;padding:3px 9px;border-radius:999px;background:var(--accent-soft);color:var(--deep);white-space:nowrap}
+.tag.coral{background:var(--coral-soft);color:var(--ink)}
+.tag.good{background:var(--good-soft);color:var(--ink)}
+.tags{display:flex;flex-wrap:wrap;gap:6px}
+.assume{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--coral);border:1px solid var(--coral);border-radius:4px;padding:0 5px;vertical-align:1px}
+
+/* tooltip */
+.tip{position:relative;border-bottom:1.5px dotted var(--accent);cursor:help}
+.tip::after{content:attr(data-tip);position:absolute;left:50%;bottom:calc(100% + 8px);transform:translateX(-50%) translateY(4px);width:max-content;max-width:min(280px,80vw);background:var(--tipbg);color:var(--tipfg);font-size:12.5px;font-weight:500;line-height:1.45;padding:8px 10px;border-radius:8px;opacity:0;pointer-events:none;transition:opacity .15s,transform .15s;z-index:30;text-transform:none;letter-spacing:0;white-space:normal;text-align:left}
+.tip:hover::after,.tip:focus::after{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* shell */
+.shell{display:grid;grid-template-columns:256px minmax(0,1fr);min-height:100%}
+.rail{position:sticky;top:0;height:100vh;overflow:auto;border-right:1px solid var(--line);background:var(--surface);padding:22px 16px 24px max(16px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:20px}
+.brand{display:flex;gap:11px;align-items:center}
+.mark{width:38px;height:38px;border-radius:9px;background:#372875;display:grid;place-items:center;flex:none}
+.mark svg{width:24px;height:24px}
+.brand b{font-family:var(--f-display);font-size:16px;color:var(--deep);display:block;line-height:1.1}
+.brand span{font-size:12px;color:var(--muted)}
+.navgroup{display:flex;flex-direction:column;gap:2px}
+.navgroup .eyebrow{color:var(--muted);margin:0 10px 6px}
+.nav a{display:flex;align-items:center;gap:9px;text-decoration:none;color:var(--ink);padding:7px 10px;border-radius:8px;font-weight:500;font-size:14.5px}
+.nav a .em{width:20px;text-align:center}
+.nav a:hover{background:var(--accent-soft)}
+.nav a[aria-current="page"]{background:var(--accent);color:var(--accent-ink)}
+.nav a .pill{margin-left:auto;font-size:10.5px;font-weight:700;padding:1px 7px;border-radius:999px;background:var(--coral);color:#2F2B36}
+.rail-foot{margin-top:auto;font-size:12px;color:var(--muted);display:flex;flex-direction:column;gap:8px}
+.themebtn{font-size:12.5px;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:7px;padding:6px 10px;cursor:pointer;align-self:flex-start}
+main{min-width:0;padding-block:36px 80px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.page{max-width:1080px;margin:0 auto;display:flex;flex-direction:column;gap:30px}
+.page-head{display:flex;flex-direction:column;gap:10px;max-width:720px}
+.lede{font-size:17px;color:var(--muted);max-width:62ch}
+section.block{display:flex;flex-direction:column;gap:14px}
+.sec-head{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap}
+
+.grid{display:grid;gap:14px}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.g5{grid-template-columns:repeat(5,minmax(0,1fr))}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.btn{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;border-radius:999px;padding:7px 14px;cursor:pointer;border:1px solid var(--line);background:var(--panel);color:var(--ink);text-decoration:none;white-space:nowrap}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.coral{background:var(--coral);border-color:var(--coral);color:#2F2B36}
+button.panel{color:var(--ink);font:inherit;width:100%}
+.btn.ghost{border-color:transparent;background:transparent;color:var(--accent);padding-inline:6px}
+.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:auto;padding-top:6px}
+.tbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r);background:var(--panel)}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:11.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:600;background:var(--surface)}
+tr:last-child td{border-bottom:0}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+ul.clean{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:5px}
+
+/* hero */
+.hero{background:#372875;color:#fff;border-radius:18px;padding:clamp(22px,4vw,40px);display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:26px;position:relative;overflow:hidden}
+:root[data-theme="dark"] .hero{background:#2A2050}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .hero{background:#2A2050}}
+.hero h1{color:#fff}
+.hero .eyebrow{color:#FDD6C4}
+.hero .quote{font-size:clamp(16px,1.6vw,18px);line-height:1.5;color:#E9E4FC;border-left:3px solid #FA854F;padding-left:14px}
+.hero-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;align-content:start}
+.hero-stats div{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:12px;padding:13px}
+.hero-stats b{display:block;font-family:var(--f-display);font-size:30px;color:#FA854F;line-height:1}
+.hero-stats span{font-size:13px;color:#E4DEFA}
+.hero .btn{background:#FA854F;border-color:#FA854F;color:#2F2B36}
+.bars{position:absolute;right:-10px;bottom:-12px;opacity:.12;pointer-events:none}
+
+.area{text-decoration:none;color:inherit;transition:border-color .15s,transform .15s}
+.area:hover{border-color:var(--accent);transform:translateY(-2px)}
+.area .big{font-size:28px;line-height:1}
+.area .go{color:var(--accent);font-weight:700;font-size:13.5px;margin-top:auto}
+.shift{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:10px;align-items:center;padding:10px 14px;border-bottom:1px solid var(--line);font-size:14px}
+.shift:last-child{border-bottom:0}
+.shift .from{color:var(--muted)}
+.shift .arr{color:var(--coral);font-weight:800}
+.rulechips{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+.rule{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:12px;display:flex;flex-direction:column;gap:6px;font-size:13.5px;font-weight:600;color:var(--ink)}
+.rule .big{font-size:22px}
+
+/* use case cards */
+.ucgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.ucc{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:9px;min-width:0;scroll-margin-top:20px}
+.ucc-top{display:flex;gap:12px;align-items:flex-start}
+.ico{width:42px;height:42px;border-radius:11px;display:grid;place-items:center;font-size:21px;background:var(--accent-soft);flex:none}
+.ucc h3{font-size:17px}
+.ucc p{font-size:14px;color:var(--muted)}
+
+/* modal */
+.modal{position:fixed;inset:0;z-index:40;background:var(--shade);display:flex;align-items:flex-start;justify-content:center;padding:max(24px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(24px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));overflow-y:auto}
+.modal-card{background:var(--bg);border-radius:16px;width:100%;max-width:1020px;box-shadow:0 20px 60px rgba(0,0,0,.3);display:flex;flex-direction:column;min-width:0;animation:pop .18s ease-out}
+@keyframes pop{from{transform:translateY(8px)}to{transform:none}}
+.modal-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;padding:18px 20px 12px;border-bottom:1px solid var(--line);position:sticky;top:calc(-1 * max(24px,env(safe-area-inset-top,0px)));background:var(--bg);border-radius:16px 16px 0 0;z-index:2}
+.modal-head h2{font-size:22px}
+.x{border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:50%;width:34px;height:34px;cursor:pointer;flex:none;font-size:15px}
+.modal-body{padding:16px 20px 22px;display:flex;flex-direction:column;gap:16px;min-width:0}
+.mgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:16px}
+.box{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:14px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.box h4{font-size:14px;font-family:var(--f-body);font-weight:700;color:var(--deep);text-transform:uppercase;letter-spacing:.05em}
+.prompt{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px 14px;font-family:var(--f-mono);font-size:12.5px;line-height:1.6;white-space:pre-wrap;word-break:break-word;color:var(--ink);min-width:0;max-height:420px;overflow:auto}
+.prompt-bar{display:flex;justify-content:space-between;align-items:center;gap:8px}
+
+/* simulation */
+.sim{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--surface)}
+.sim-top{display:flex;align-items:center;gap:10px;padding:9px 12px;border-bottom:1px solid var(--line);background:var(--panel);flex-wrap:wrap}
+.dots{display:flex;gap:5px}.dots i{width:9px;height:9px;border-radius:50%;background:var(--line);display:block}
+.appb{font-size:11.5px;font-weight:700;color:#fff;padding:2px 8px;border-radius:5px}
+.app-Excel{background:#1D6F42}.app-Word{background:#2B579A}.app-PowerPoint{background:#C43E1C}.app-Chat{background:#7B62DF}.app-Agent{background:#372875}.app-Studio{background:#0B7A75}.app-Researcher{background:#0E7490}.app-Analyst{background:#6D28D9}
+.sim-file{font-size:12px;color:var(--muted);font-family:var(--f-mono);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;flex:1}
+.sim-play{font-size:13px;font-weight:700;border:0;background:var(--coral);color:#2F2B36;border-radius:999px;padding:6px 14px;cursor:pointer;display:inline-flex;gap:7px;align-items:center}
+.sim-play svg{width:11px;height:11px}
+.sim-prog{height:3px;background:var(--line)}
+.sim-prog i{display:block;height:100%;width:100%;background:var(--accent);transition:width .25s linear}
+.sim-body{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);min-height:280px}
+.sim.chatonly .sim-body{grid-template-columns:minmax(0,1fr)}
+.canvas{padding:14px;border-right:1px solid var(--line);background:var(--panel);overflow-x:auto;min-width:0}
+.pane{display:flex;flex-direction:column;min-width:0;background:var(--surface)}
+.pane-h{display:flex;align-items:center;gap:7px;font-size:12.5px;font-weight:700;color:var(--deep);padding:10px 12px;border-bottom:1px solid var(--line)}
+.spark{width:16px;height:16px;flex:none}
+.msgs{flex:1;padding:12px;display:flex;flex-direction:column;gap:10px;font-size:13.5px;min-height:180px}
+.sim.chatonly .msgs{max-width:760px;width:100%;margin:0 auto}
+.bub-u{align-self:flex-end;background:var(--accent);color:var(--accent-ink);padding:9px 12px;border-radius:12px 12px 3px 12px;max-width:92%;white-space:pre-wrap;font-size:12.5px;max-height:160px;overflow:auto}
+.chips{display:flex;flex-direction:column;gap:4px}
+.chip{font-size:12px;color:var(--muted);display:flex;gap:6px;align-items:center}
+.chip .ck{width:13px;height:13px;border-radius:50%;border:2px solid var(--accent);flex:none}
+.chip.done .ck{background:var(--accent)}
+.chip.run .ck{border-right-color:transparent;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.reply{background:var(--panel);border:1px solid var(--line);border-radius:12px 12px 12px 3px;padding:10px 12px;display:flex;flex-direction:column;gap:7px}
+.reply ul{margin:0;padding-left:17px;display:flex;flex-direction:column;gap:4px}
+.reply table{font-size:12px}
+.reply th,.reply td{padding:5px 7px}
+.reply .warn{font-size:12px;color:var(--muted);border-top:1px dashed var(--line);padding-top:6px}
+.inputbar{margin:0 12px 12px;border:1px solid var(--line);border-radius:10px;background:var(--panel);padding:8px 10px;font-size:12.5px;color:var(--muted);min-height:38px;white-space:pre-wrap;overflow:hidden;max-height:90px}
+.inputbar.typing{color:var(--ink);border-color:var(--accent)}
+.caret{display:inline-block;width:1.5px;height:1em;background:var(--accent);vertical-align:-2px;animation:blink 1s step-end infinite}
+@keyframes blink{50%{opacity:0}}
+.rv{transition:opacity .35s, background-color .35s}
+.sim.playing .rv.pending{opacity:.12}
+.sim-cap{font-size:12px;color:var(--muted);padding:8px 12px;border-top:1px solid var(--line);background:var(--panel)}
+.sheet{font-size:12px;width:100%;border:1px solid var(--line)}
+.sheet th{font-size:10.5px;padding:5px 7px;text-transform:none;letter-spacing:0}
+.sheet td{padding:5px 7px;font-variant-numeric:tabular-nums}
+.sheet .new{background:var(--accent-soft)}
+.sheet tr.over td,.sheet tr.flag td{background:var(--coral-soft)}
+.sheet tr.under td{background:var(--accent-soft)}
+.cell-note{font-size:11px;color:var(--muted)}
+.doc{font-size:13px;display:flex;flex-direction:column;gap:9px;max-width:620px}
+.doc h4{font-size:15px;font-family:var(--f-display)}
+.chk{background:var(--coral-soft);padding:0 3px;border-radius:3px;font-size:11.5px;font-weight:600}
+.code{font-family:var(--f-mono);font-size:11px;background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:8px 10px;white-space:pre;overflow-x:auto;color:var(--ink)}
+.slides{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.slide{aspect-ratio:16/9;max-width:100%;border:1px solid var(--line);border-radius:5px;padding:7px;display:flex;flex-direction:column;gap:3px;background:var(--panel);overflow:hidden}
+.slide b{font-size:10.5px;color:var(--deep);line-height:1.2}
+.slide i{display:block;height:3px;border-radius:2px;background:var(--line)}
+.slide.title{background:#372875}
+.slide.title b{color:#fff}
+.slide .n{font-size:9px;color:var(--muted);margin-top:auto}
+.chart svg{width:100%;height:auto;display:block}
+.chart text{fill:var(--muted);font-size:11px;font-family:var(--f-body)}
+
+/* habits */
+.filters{display:flex;flex-wrap:wrap;gap:6px}
+.fbtn{font-size:13px;font-weight:600;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:999px;padding:6px 13px;cursor:pointer}
+.fbtn[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.ccol{display:flex;flex-direction:column;gap:10px;min-width:0}
+.ccol-h{border-radius:var(--r);padding:12px 14px;color:#fff;display:flex;flex-direction:column;gap:3px}
+.ccol-h h3{color:#fff;font-size:18px}
+.ccol-h p{font-size:12.5px;color:rgba(255,255,255,.9)}
+.c-clarity{background:#7B62DF}.c-coaching{background:#B8521F}.c-create{background:#372875}.c-collab{background:#3F3A4A}
+.habit{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:12px;display:flex;flex-direction:column;gap:7px;min-width:0}
+.habit h4{font-size:14.5px}
+.mode{font-size:11px;font-weight:700;color:var(--accent)}
+.banner{display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap;background:var(--accent-soft);border:1px solid var(--line);border-radius:14px;padding:16px 18px}
+.banner b{font-family:var(--f-display);font-size:18px;color:var(--deep)}
+
+/* clarity lab */
+.lanes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.lane{display:flex;flex-direction:column;gap:12px;min-width:0}
+.lane-h{border-radius:14px;padding:16px;color:#fff;display:flex;flex-direction:column;gap:6px}
+.lane-h h2{color:#fff;font-size:22px}
+.lane-h p{color:rgba(255,255,255,.9);font-size:14px}
+.lane-t{background:#0E7490}.lane-m{background:#6D28D9}
+.flow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;counter-reset:f}
+.fstep{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:12px;display:flex;flex-direction:column;gap:5px;position:relative}
+.fstep .big{font-size:24px}
+.fstep b{font-size:14px}
+.fstep span{font-size:12.5px;color:var(--muted)}
+.lens{display:flex;flex-wrap:wrap;gap:6px}
+.lens .tag{background:var(--surface);border:1px solid var(--line);color:var(--ink)}
+
+/* agents */
+.tabs{display:flex;flex-wrap:wrap;gap:6px;border-bottom:1px solid var(--line);padding-bottom:10px}
+.toolb{font-size:11px;font-weight:700;padding:2px 8px;border-radius:5px;color:#fff;background:#372875}
+.toolb.full{background:#0B7A75}
+.steps4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+
+/* roadmap */
+.qgrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.q{background:var(--panel);border:1px solid var(--line);border-radius:14px;display:flex;flex-direction:column;min-width:0;overflow:hidden}
+.q-h{padding:14px;border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:4px}
+.q-h .eyebrow{color:var(--coral)}
+.q-h h3{font-size:20px}
+.q-goal{font-size:13px;color:var(--muted)}
+.q-items{padding:12px;display:flex;flex-direction:column;gap:7px;flex:1}
+.item{border:1px solid var(--line);border-left:4px solid #7B62DF;border-radius:7px;padding:7px 10px;font-size:13px;display:flex;flex-direction:column;gap:2px}
+.item[data-area="finance"]{border-left-color:#FA854F}
+.item[data-area="research"]{border-left-color:#1F8A5B}
+.item[data-area="agents"]{border-left-color:#0B7A75}
+.item[data-area="governance"]{border-left-color:#8A8496}
+.item small{color:var(--muted);font-size:11.5px}
+.item.dim{opacity:.25}
+.q-foot{padding:10px 12px;border-top:1px solid var(--line);background:var(--surface)}
+.legend{display:flex;flex-wrap:wrap;gap:12px;font-size:12.5px;color:var(--muted)}
+.legend span::before{content:"";display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;background:var(--c);vertical-align:-1px}
+.tier{border-radius:var(--r);padding:14px;border:1px solid var(--line);background:var(--panel);display:flex;flex-direction:column;gap:6px}
+.tier .big{font-size:24px}
+.tier .lvl{font-family:var(--f-display);font-weight:700;font-size:16px;color:var(--deep)}
+.tier.hot{border-color:var(--coral);background:var(--coral-soft)}
+
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:#372875;color:#fff;padding:8px 14px;border-radius:8px;font-size:13px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:50}
+.toast.show{opacity:1}
+
+@media (max-width:1100px){.qgrid,.g4,.g5,.rulechips,.steps4,.flow{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:900px){
+  .shell{grid-template-columns:minmax(0,1fr)}
+  .rail{position:sticky;top:env(safe-area-inset-top,0px);height:auto;z-index:15;flex-direction:row;align-items:center;gap:10px;padding:10px max(16px,env(safe-area-inset-right,0px)) 10px max(16px,env(safe-area-inset-left,0px));border-right:0;border-bottom:1px solid var(--line);overflow-x:auto}
+  body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:16;background:var(--surface)}
+  .brand > div:last-child,.rail-foot,.navgroup .eyebrow{display:none}
+  .navwrap{display:flex;gap:2px}
+  .navgroup{flex-direction:row}
+  .nav a{white-space:nowrap;padding:6px 9px;font-size:13.5px}
+  .ucgrid,.g3,.hero,.mgrid,.lanes{grid-template-columns:minmax(0,1fr)}
+  .sim-body{grid-template-columns:minmax(0,1fr)}
+  .canvas{border-right:0;border-bottom:1px solid var(--line)}
+  main{padding-block:22px 60px}
+}
+@media (max-width:620px){.modal-head{top:calc(-1 * max(24px,env(safe-area-inset-top,0px)))}.g2,.g4,.g5,.qgrid,.rulechips,.steps4,.flow{grid-template-columns:minmax(0,1fr)}.slides{grid-template-columns:repeat(2,minmax(0,1fr))}.shift{grid-template-columns:minmax(0,1fr)}.shift .arr{display:none}.modal{padding-inline:8px}}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head><body>
+<div class="shell">
+  <aside class="rail" aria-label="Playbook navigation">
+    <div class="brand">
+      <div class="mark" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="12" width="3.4" height="8" rx="1" fill="#FA854F"/><rect x="8.2" y="8" width="3.4" height="12" rx="1" fill="#B3A3F2"/><rect x="13.4" y="4" width="3.4" height="16" rx="1" fill="#7B62DF"/><rect x="18.6" y="9" width="3.4" height="11" rx="1" fill="#FFFFFF"/></svg></div>
+      <div><b>Insights × Copilot</b><span>Adoption playbook 2026–27</span></div>
+    </div>
+    <nav class="nav navwrap">
+      <div class="navgroup"><span class="eyebrow">Start</span>
+        <a href="#overview"><span class="em">🏠</span>Overview</a>
+        <a href="#licences"><span class="em">🎟️</span>Licence plan</a>
+      </div>
+      <div class="navgroup"><span class="eyebrow">Focus areas</span>
+        <a href="#finance"><span class="em">💰</span>Finance<span class="pill">Focus</span></a>
+        <a href="#leadership"><span class="em">👩🏽‍💼</span>Leadership</a>
+        <a href="#research"><span class="em">🔬</span>Research</a>
+        <a href="#agents"><span class="em">🤖</span>AI agents</a>
+      </div>
+      <div class="navgroup"><span class="eyebrow">Practise</span>
+        <a href="#habits"><span class="em">🧭</span>4C habits</a>
+        <a href="#clarity"><span class="em">🔭</span>Clarity lab<span class="pill">New</span></a>
+      </div>
+      <div class="navgroup"><span class="eyebrow">Plan</span>
+        <a href="#roadmap"><span class="em">🗺️</span>Roadmap</a>
+        <a href="#governance"><span class="em">🛡️</span>Data safety</a>
+        <a href="#nextsteps"><span class="em">✅</span>Next steps</a>
+      </div>
+    </nav>
+    <div class="rail-foot">
+      <button class="themebtn" id="themebtn" type="button">🌓 Switch theme</button>
+      <span>Prepared by Trident for The Insights Initiative · October 2026</span>
+      <span>Simulations use fictional sample data.</span>
+    </div>
+  </aside>
+
+  <main id="main">
+
+  <!-- ============================================================ OVERVIEW -->
+  <div class="page" data-page="overview">
+    <div class="hero">
+      <div style="display:flex;flex-direction:column;gap:14px;position:relative;z-index:1">
+        <span class="eyebrow">The Insights Initiative · Microsoft 365 Copilot</span>
+        <h1>A small team with the reach of a large one</h1>
+        <p class="quote">By October 2027, everyone uses Copilot daily and safely, and SLB evidence moves from survey to policy brief to public conversation in weeks, in three languages.</p>
+        <div><button class="btn" type="button" data-more="vision">📖 Read the full vision</button></div>
+      </div>
+      <div class="hero-stats" style="position:relative;z-index:1">
+        <div><b>5</b><span>Copilot licences</span></div>
+        <div><b>24</b><span>playable simulations</span></div>
+        <div><b>17</b><span>agent build guides</span></div>
+        <div><b>12</b><span>months, Nov 26 – Oct 27</span></div>
+      </div>
+      <svg class="bars" width="360" height="220" viewBox="0 0 360 220" aria-hidden="true"><rect x="0" y="120" width="60" height="100" fill="#FFFFFF"/><rect x="75" y="70" width="60" height="150" fill="#FFFFFF"/><rect x="150" y="20" width="60" height="200" fill="#FFFFFF"/><rect x="225" y="90" width="60" height="130" fill="#FFFFFF"/><rect x="300" y="50" width="60" height="170" fill="#FFFFFF"/></svg>
+    </div>
+
+
+    <section class="block" id="downloads">
+      <div class="sec-head"><h2>📥 Downloads</h2><span class="muted small">All sample data is fictional and safe to use in demos.</span></div>
+      <div class="grid g3">
+        <div class="panel"><span class="big" style="font-size:28px">📦</span><h3>Demo data kit</h3><p class="muted small">8 sample Excel and Word files, a README and 17 agent build guides, in one zip.</p><div class="actions"><a class="btn primary" href="https://sahantrident.github.io/insights-copilot-playbook/downloads/Insights_Demo_Data.zip" download>⬇️ Download .zip · 320 KB</a><button class="btn ghost" type="button" data-more="files">Single files →</button></div></div>
+        <div class="panel"><span class="big" style="font-size:28px">🧭</span><h3>Copilot Discovery prompt</h3><p class="muted small">Run it in <span class="tip" tabindex="0" data-tip="Microsoft 365 Copilot Chat with the Work toggle on, so it can read your own email, Teams, meetings and files.">Copilot Chat (Work mode)</span> to get your personal opportunity dashboard.</p><div class="actions"><a class="btn primary" href="https://sahantrident.github.io/insights-copilot-playbook/downloads/Insights_Copilot_Discovery_Prompt.md" download>⬇️ Download .md · 14 KB</a><button class="btn ghost" type="button" data-more="discovery">How to run it →</button></div></div>
+        <div class="panel"><span class="big" style="font-size:28px">🤖</span><h3>Agent build guides</h3><p class="muted small">17 step-by-step guides by focus area. Included in the zip, and browsable here.</p><div class="actions"><a class="btn primary" href="#agents">Browse agents →</a></div></div>
+      </div>
+    </section>
+    <section class="block">
+      <div class="sec-head"><h2>Where Copilot helps first</h2></div>
+      <div class="grid g4">
+        <a class="panel area" href="#finance"><span class="big">💰</span><h3>Finance &amp; grants</h3><p class="muted small">Variances, ledger checks, donor narratives, grant rules.</p><span class="go">7 use cases →</span></a>
+        <a class="panel area" href="#leadership"><span class="big">👩🏽‍💼</span><h3>Leadership</h3><p class="muted small">Weekly brief, board pack, funding calls.</p><span class="go">4 use cases →</span></a>
+        <a class="panel area" href="#research"><span class="big">🔬</span><h3>Research</h3><p class="muted small">Themes, trends, briefs, Sinhala and Tamil drafts.</p><span class="go">4 use cases + Clarity lab →</span></a>
+        <a class="panel area" href="#agents"><span class="big">🤖</span><h3>AI agents</h3><p class="muted small">17 ready-to-build agents across the organisation.</p><span class="go">Agent builder →</span></a>
+      </div>
+    </section>
+
+    <section class="block">
+      <div class="sec-head"><h2>What changes</h2><button class="btn ghost" type="button" data-more="fromto">See all 9 shifts →</button></div>
+      <div class="panel" style="padding:4px 0">
+        <div class="shift"><span class="from">😩 Catching up on email by hand</span><span class="arr">→</span><span>☕ 10-minute Copilot brief each morning</span></div>
+        <div class="shift"><span class="from">📄 Donor reports built from scratch</span><span class="arr">→</span><span>⚡ Template + Copilot draft + finance check</span></div>
+        <div class="shift"><span class="from">🧠 Grant rules in people's heads</span><span class="arr">→</span><span>📜 Grant Compliance agent with clause references</span></div>
+        <div class="shift"><span class="from">🐢 Report → brief → media takes weeks</span><span class="arr">→</span><span>🚀 Same chain in days, human-reviewed</span></div>
+      </div>
+    </section>
+
+    <section class="block">
+      <div class="sec-head"><h2>Five safety rules</h2><span class="muted small">Hover or tap a rule for detail</span></div>
+      <div class="rulechips">
+        <div class="rule tip" tabindex="0" data-tip="Only anonymised data goes anywhere Copilot can see. Identifiable survey and interview data stays in restricted storage."><span class="big">🙈</span>No identifiable respondent data</div>
+        <div class="rule tip" tabindex="0" data-tip="Copilot respects permissions. If a folder is over-shared, Copilot can surface it, so we clean permissions first."><span class="big">👀</span>Copilot sees what you see</div>
+        <div class="rule tip" tabindex="0" data-tip="Donor reports, press releases, translations, policy briefs: a named person checks every figure and every word."><span class="big">✅</span>A person checks every output</div>
+        <div class="rule tip" tabindex="0" data-tip="Reporting formats, eligibility and confidentiality clauses override any AI shortcut."><span class="big">📜</span>Donor rules come first</div>
+        <div class="rule tip" tabindex="0" data-tip="Work mode keeps your prompts inside the Microsoft 365 tenant. Never paste internal content into consumer AI tools."><span class="big">🏢</span>Work mode for work content</div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ============================================================ LICENCES -->
+  <div class="page" data-page="licences" hidden>
+    <div class="page-head"><span class="eyebrow">🎟️ Licence plan</span><h1>Five seats where the work is heaviest</h1>
+      <p class="lede">Everyone else uses <span class="tip" tabindex="0" data-tip="Free with Microsoft 365 work accounts: web-grounded chat, file upload and some agents. It can't read your mailbox or files like a licensed seat.">Copilot Chat</span> and joins the training. We review at 90 days.</p></div>
+    <div class="grid g5">
+      <div class="panel"><span class="tag coral">💰 Seat 1 · Champion</span><h3>Rajitha Chamali</h3><p class="muted small">Finance &amp; Administration. Highest value: Excel, donor reports, grant rules, audit.</p></div>
+      <div class="panel"><span class="tag">👩🏽‍💼 Seat 2</span><h3>Dr. Natasha Palansuriya</h3><p class="muted small">Executive Director. Heaviest inbox; board, donors, proposals.</p></div>
+      <div class="panel"><span class="tag">📣 Seat 3 · Champion</span><h3>Saranie Wijesinghe</h3><p class="muted small">Programmes. Activity reports, partners, donor narratives.</p></div>
+      <div class="panel"><span class="tag good">🔬 Seat 4</span><h3>Minuri Perera</h3><p class="muted small">Research. Researcher and Analyst agents on anonymised data.</p></div>
+      <div class="panel"><span class="tag">🔄 Seat 5</span><h3>To confirm</h3><p class="muted small">Communications Officer, or rotate every 60 days.</p></div>
+    </div>
+    <div><button class="btn" type="button" data-more="licencecompare">🔍 Licensed vs Copilot Chat: what's the difference?</button></div>
+  </div>
+
+  <!-- ============================================================ FINANCE / LEADERSHIP / RESEARCH -->
+  <div class="page" data-page="finance" hidden>
+    <div class="page-head"><span class="eyebrow">💰 Focus area</span><h1>Finance &amp; grants</h1>
+      <p class="lede">Seven use cases on the sample grant workbook and agreement. Open any card to see the prompt and watch it run.</p></div>
+    <div id="uc-finance" class="ucgrid"></div>
+  </div>
+  <div class="page" data-page="leadership" hidden>
+    <div class="page-head"><span class="eyebrow">👩🏽‍💼 Focus area</span><h1>Leadership</h1>
+      <p class="lede">Less catching up, more deciding.</p></div>
+    <div id="uc-leadership" class="ucgrid"></div>
+  </div>
+  <div class="page" data-page="research" hidden>
+    <div class="page-head"><span class="eyebrow">🔬 Focus area</span><h1>Research</h1>
+      <p class="lede">From evidence to public conversation, faster. Anonymised and aggregated data only.</p></div>
+    <div id="uc-research" class="ucgrid"></div>
+    <a class="banner" href="#clarity" style="text-decoration:none;color:inherit"><div><b>🔭🔬 Go deeper in the Clarity lab</b><p class="muted small">Expert-level Researcher and Analyst agent prompts for the SLB team.</p></div><span class="btn primary">Open Clarity lab →</span></a>
+  </div>
+
+  <!-- ============================================================ AGENTS -->
+  <div class="page" data-page="agents" hidden>
+    <div class="page-head"><span class="eyebrow">🤖 AI agents</span><h1>17 agents, one for every team</h1>
+      <p class="lede">Most are built in <span class="tip" tabindex="0" data-tip="The agent builder inside Microsoft 365 Copilot: name, instructions, knowledge files and starter prompts. No code, about 15 minutes.">Copilot Studio Lite</span>. The public one needs <span class="tip" tabindex="0" data-tip="The full Copilot Studio: website channels, topics, connectors and authentication. Billed by usage; check current pricing.">Copilot Studio (full)</span>. A full build guide for each agent is in the zip.</p></div>
+    <section class="block">
+      <h2>🛠️ Build any agent in 4 steps</h2>
+      <div class="steps4">
+        <div class="fstep"><span class="big">🗂️</span><b>1. Prepare a clean folder</b><span>SharePoint folder with only the documents the agent needs.</span></div>
+        <div class="fstep"><span class="big">🧠</span><b>2. Create → Configure</b><span>Copilot → Agents → Create agent. Paste name, instructions, starters.</span></div>
+        <div class="fstep"><span class="big">🧪</span><b>3. Test</b><span>Run the test questions in the guide. Tighten if a rule breaks.</span></div>
+        <div class="fstep"><span class="big">🔗</span><b>4. Share</b><span>With named people or a group, not the whole tenant.</span></div>
+      </div>
+    </section>
+    <div class="tabs" role="group" aria-label="Agents by focus area" id="agtabs"></div>
+    <div id="aggrid" class="ucgrid"></div>
+  </div>
+
+  <!-- ============================================================ HABITS -->
+  <div class="page" data-page="habits" hidden>
+    <div class="page-head"><span class="eyebrow">🧭 Personal use cases</span><h1>The 4C habits</h1>
+      <p class="lede">Pick one habit per C. Practise it for two weeks.</p></div>
+    <div class="filters" role="group" aria-label="Filter habits by person">
+      <button class="fbtn" type="button" data-person="all" aria-pressed="true">Everyone</button>
+      <button class="fbtn" type="button" data-person="Natasha" aria-pressed="false">Natasha</button>
+      <button class="fbtn" type="button" data-person="Rajitha" aria-pressed="false">Rajitha</button>
+      <button class="fbtn" type="button" data-person="Saranie" aria-pressed="false">Saranie</button>
+      <button class="fbtn" type="button" data-person="Minuri" aria-pressed="false">Minuri</button>
+    </div>
+    <div class="grid g4" id="habits"></div>
+    <a class="banner" href="#clarity" style="text-decoration:none;color:inherit"><div><b>🔭 Telescopic + 🔬 Microscopic, research grade</b><p class="muted small">Researcher and Analyst agent prompts built on the team's own expertise.</p></div><span class="btn primary">Open Clarity lab →</span></a>
+  </div>
+
+  <!-- ============================================================ CLARITY LAB -->
+  <div class="page" data-page="clarity" hidden>
+    <div class="page-head"><span class="eyebrow">🔭🔬 Clarity lab · for the SLB research team</span><h1>Zoom out with Researcher, zoom in with Analyst</h1>
+      <p class="lede">Research-grade prompts that bring the team's own expertise into each run. Open a card for the full prompt.</p></div>
+    <section class="block">
+      <div class="flow">
+        <div class="fstep"><span class="big">❓</span><b>1. Frame the question</b><span>Who brings which lens? What will we decide with the answer?</span></div>
+        <div class="fstep"><span class="big">🔭</span><b>2. Telescopic: Researcher</b><span><span class="tip" tabindex="0" data-tip="A Microsoft 365 Copilot agent that plans multi-step research across the web and your work files, then writes a cited report. Takes several minutes.">Researcher agent</span> maps the evidence, with citations.</span></div>
+        <div class="fstep"><span class="big">🔬</span><b>3. Microscopic: Analyst</b><span><span class="tip" tabindex="0" data-tip="A Microsoft 365 Copilot agent that reasons over data files and writes and runs Python to analyse them. It shows its code so you can check it.">Analyst agent</span> tests hypotheses on aggregated tables.</span></div>
+        <div class="fstep"><span class="big">✍️</span><b>4. Synthesise</b><span>Evidence matrix → brief, with researcher review at each step.</span></div>
+      </div>
+    </section>
+    <div class="lanes">
+      <div class="lane">
+        <div class="lane-h lane-t"><span class="eyebrow" style="color:#CFFAFE">🔭 Telescopic mode</span><h2>Researcher agent</h2><p>Zoom out: literature, comparisons, mechanisms, gaps.</p></div>
+        <div id="lane-t" class="grid" style="gap:12px"></div>
+      </div>
+      <div class="lane">
+        <div class="lane-h lane-m"><span class="eyebrow" style="color:#EDE9FE">🔬 Microscopic mode</span><h2>Analyst agent</h2><p>Zoom in: significance, gaps, indices, triangulation.</p></div>
+        <div id="lane-m" class="grid" style="gap:12px"></div>
+      </div>
+    </div>
+    <p class="muted small">⚠️ Researcher and Analyst come with a Microsoft 365 Copilot licence; check they're enabled in the tenant. Survey files in the demo pack are fictional. Lens names refer to the expertise each prompt draws on.</p>
+  </div>
+
+  <!-- ============================================================ ROADMAP -->
+  <div class="page" data-page="roadmap" hidden>
+    <div class="page-head"><span class="eyebrow">🗺️ Nov 2026 – Oct 2027</span><h1>12-month roadmap</h1>
+      <p class="lede">Foundation → Scale → Research engine → Transform.</p></div>
+    <div class="filters" role="group" aria-label="Filter roadmap by area" id="rfilters">
+      <button class="fbtn" type="button" data-area="all" aria-pressed="true">All</button>
+      <button class="fbtn" type="button" data-area="finance" aria-pressed="false">💰 Finance</button>
+      <button class="fbtn" type="button" data-area="leadership" aria-pressed="false">👩🏽‍💼 Leadership</button>
+      <button class="fbtn" type="button" data-area="research" aria-pressed="false">🔬 Research</button>
+      <button class="fbtn" type="button" data-area="agents" aria-pressed="false">🤖 Agents</button>
+      <button class="fbtn" type="button" data-area="governance" aria-pressed="false">🛡️ Governance</button>
+    </div>
+    <div class="legend"><span style="--c:#FA854F">Finance</span><span style="--c:#7B62DF">Leadership</span><span style="--c:#1F8A5B">Research</span><span style="--c:#0B7A75">Agents</span><span style="--c:#8A8496">Governance</span></div>
+    <div class="qgrid" id="qgrid"></div>
+    <div><button class="btn" type="button" data-more="kpis">📏 How we measure progress</button></div>
+  </div>
+
+  <!-- ============================================================ GOVERNANCE -->
+  <div class="page" data-page="governance" hidden>
+    <div class="page-head"><span class="eyebrow">🛡️ Governance</span><h1>Data safety before scale</h1>
+      <p class="lede">Copilot respects permissions. The real risk is over-sharing inside the tenant.</p></div>
+    <section class="block">
+      <div class="sec-head"><h2>Sensitivity labels</h2><span class="assume">Proposed</span></div>
+      <div class="grid g4">
+        <div class="tier"><span class="big">🌍</span><span class="lvl">Public</span><p class="small muted">Published reports, data releases.</p><span class="tag good">Copilot ✓</span></div>
+        <div class="tier"><span class="big">📁</span><span class="lvl">Internal</span><p class="small muted">Plans, notes, templates, drafts.</p><span class="tag good">Copilot ✓</span></div>
+        <div class="tier"><span class="big">🔒</span><span class="lvl">Confidential</span><p class="small muted">Finance, HR, grant agreements, board papers.</p><span class="tag">Named users only</span></div>
+        <div class="tier hot"><span class="big">⛔</span><span class="lvl">Respondent data</span><p class="small">Identifiable survey and interview data, consent forms, recordings.</p><span class="tag coral">Copilot blocked</span></div>
+      </div>
+    </section>
+    <div class="grid g3">
+      <button class="panel" type="button" data-more="golive" style="text-align:left;cursor:pointer"><span class="big" style="font-size:24px">🚦</span><h3>Before go-live checklist</h3><p class="muted small">Six steps before wider rollout.</p><span class="go" style="color:var(--accent);font-weight:700;font-size:13.5px">Open →</span></button>
+      <button class="panel" type="button" data-more="policy" style="text-align:left;cursor:pointer"><span class="big" style="font-size:24px">📘</span><h3>AI use policy outline</h3><p class="muted small">What goes into the 2-page policy.</p><span class="go" style="color:var(--accent);font-weight:700;font-size:13.5px">Open →</span></button>
+      <button class="panel" type="button" data-more="review" style="text-align:left;cursor:pointer"><span class="big" style="font-size:24px">🧑‍⚖️</span><h3>Human review checkpoints</h3><p class="muted small">Who checks what, before it leaves.</p><span class="go" style="color:var(--accent);font-weight:700;font-size:13.5px">Open →</span></button>
+    </div>
+  </div>
+
+  <!-- ============================================================ NEXT STEPS -->
+  <div class="page" data-page="nextsteps" hidden>
+    <div class="page-head"><span class="eyebrow">✅ Adoption programme</span><h1>The first 90 days</h1>
+      <p class="lede">Dates to agree in the room.</p></div>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th></th><th>Action</th><th>Owner</th><th class="num">By</th></tr></thead>
+      <tbody>
+        <tr><td>🎟️</td><td>Assign the 5 licences</td><td>Hashan / Rajitha</td><td class="num">30 Oct</td></tr>
+        <tr><td>📊</td><td>Run the Discovery prompt; send dashboards</td><td>Licensed users</td><td class="num">4 Nov</td></tr>
+        <tr><td>💬</td><td>2-week habit check-in</td><td>Sahan</td><td class="num">11 Nov</td></tr>
+        <tr><td>🔍</td><td>Over-sharing review; find respondent data</td><td>Sahan + Hashan</td><td class="num">13 Nov</td></tr>
+        <tr><td>🏛️</td><td>Board: AI policy + Copilot pilot</td><td>Natasha</td><td class="num">18 Nov</td></tr>
+        <tr><td>🤖</td><td>Build first 2 agents: Grant Compliance, Copilot Coach</td><td>Rajitha + Sahan</td><td class="num">Late Nov</td></tr>
+        <tr><td>🎓</td><td>Team training; launch prompt channel</td><td>Sahan + champions</td><td class="num">Late Nov</td></tr>
+        <tr><td>📑</td><td>Budget and allocation templates live</td><td>Rajitha</td><td class="num">Mid Dec</td></tr>
+        <tr><td>📝</td><td>Interim donor report drafted with Copilot</td><td>Rajitha + Saranie</td><td class="num">Mid Jan</td></tr>
+        <tr><td>📈</td><td>90-day review: hours saved, seats, Q2 agents</td><td>Sahan + Natasha</td><td class="num">End Jan</td></tr>
+      </tbody>
+    </table></div>
+    <div class="grid g3">
+      <div class="panel"><h3>🏅 Champions</h3><p class="small muted">Rajitha (finance) and Saranie (programmes). 30 minutes a month with Trident; they curate the prompt library.</p></div>
+      <div class="panel"><h3>🔁 Rhythm</h3><p class="small muted">Weekly prompt share · fortnightly check-in · monthly usage report · quarterly roadmap review.</p></div>
+      <div class="panel"><h3>💸 To confirm on cost</h3><p class="small muted">Nonprofit pricing, Copilot Studio billing, Power Automate premium, grant eligibility of costs.</p></div>
+    </div>
+  </div>
+
+  </main>
+</div>
+
+<div class="modal" id="modal" hidden role="dialog" aria-modal="true" aria-labelledby="modal-title">
+  <div class="modal-card">
+    <div class="modal-head"><div style="display:flex;flex-direction:column;gap:6px;min-width:0"><h2 id="modal-title"></h2><div class="tags" id="modal-tags"></div></div><button class="x" type="button" id="modal-x" aria-label="Close">✕</button></div>
+    <div class="modal-body" id="modal-body"></div>
+  </div>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+var AGENT_DATA = {"segments": [{"key": "leadership", "emoji": "👩🏽‍💼", "title": "Leadership & Board"}, {"key": "finance", "emoji": "💰", "title": "Finance & Grants"}, {"key": "research", "emoji": "🔬", "title": "Research (SLB)"}, {"key": "programmes", "emoji": "📣", "title": "Programmes & Outreach"}, {"key": "organisation", "emoji": "🏢", "title": "Organisation-wide"}], "agents": [{"id": "board-secretary", "seg": "leadership", "emoji": "🗂️", "name": "Board Secretary", "tool": "Copilot Studio Lite", "owner": "Executive Director", "users": "ED, Senior Manager (Programmes), Finance & Admin Manager", "one": "Drafts board papers and minutes, and tracks every board decision and action.", "scenario": "Two weeks before the 18 November board meeting, the ED asks: \"Draft the agenda and cover note, and list every open action from the last two meetings with its owner.\" After the meeting she pastes her notes and asks for draft minutes in the usual format.", "knowledge": ["SharePoint › Board site: past agendas, minutes, decisions log, board calendar", "Governance documents: articles of association, board charter, delegation of authority", "Board paper templates (Word and PowerPoint)"], "caps": ["Code interpreter: off", "Web search: off", "Image generator: off"], "instructions": "You are the Board Secretary assistant for The Insights Initiative, a non-profit research organisation in Sri Lanka governed by a board of directors.\n\n## Your job\n- Draft board agendas, cover notes, board papers and minutes in the organisation's templates.\n- Keep track of decisions and actions: what was decided, when, who owns the action, and its status.\n- Answer questions such as \"What did the board decide about the reserves policy?\" with the meeting date and minute reference.\n\n## How to work\n- For minutes: use the structure Attendance, Apologies, Declarations of interest, Matters arising, Items (discussion summary, decision, action/owner/due date), Any other business, Date of next meeting.\n- Summarise discussion neutrally. Never attribute opinions to named individuals unless the notes do.\n- When drafting papers, end every paper with a clear \"Decision requested\" section.\n- When asked for open actions, return a table: Action, Owner (role), Due date, Status, Source meeting.\n\n## Non-negotiable rules\n- Never ask for, store, repeat or infer information that could identify a survey respondent, interviewee or focus-group participant.\n- Never reveal salaries, bank details or confidential donor terms to anyone who asks; point them to the Finance & Administration Manager.\n- Cite the source document (and section or clause) for every factual answer. If the answer is not in your sources, say \"I can't find this in our sources\" and suggest who to ask.\n- Mark any figure you calculate or copy as [CHECK] so a person verifies it before it is used externally.\n- Use plain English. Short paragraphs, bullets for lists, tables for comparisons.", "starters": ["Draft the agenda for the next board meeting from the board calendar and open actions.", "Turn these meeting notes into minutes in our usual format.", "List all open board actions with owner and due date.", "What did the board decide about our AI use policy?"], "guard": ["Draft minutes are marked DRAFT until the Chair approves them.", "Board papers containing finance figures are checked by the Finance & Admin Manager.", "Board site permissions limited to directors and the three staff users."], "tests": [["What did the board decide at the last meeting?", "Lists decisions with meeting date and minute reference."], ["What is the ED's salary?", "Declines and points to the Finance & Admin Manager."], ["Draft minutes from these notes: …", "Uses the standard structure; marks the draft DRAFT; no invented attendees."]], "review": "Before each board cycle", "file": "Agent_Build_Guides/1_Leadership/01_Board_Secretary.md"}, {"id": "donor-brief", "seg": "leadership", "emoji": "🤝", "name": "Donor Meeting Prep", "tool": "Copilot Studio Lite", "owner": "Executive Director", "users": "ED, Senior Manager (Programmes)", "one": "Builds a one-page brief before any donor or partner meeting.", "scenario": "Before a call with the lead donor's programme manager, the ED asks: \"Prepare me for tomorrow's call: where are we against the grant, what did we promise last time, what might they raise, and what do we want from them?\"", "knowledge": ["SharePoint › Grants: agreements, approved budgets, logframes", "Latest narrative and financial reports", "Meeting notes folder for donor and partner meetings", "Your own Outlook and Teams, if this option is enabled for the agent (check)"], "caps": ["Code interpreter: off", "Web search: on (only for the donor's public strategy and calls)"], "instructions": "You prepare the Executive Director of The Insights Initiative for meetings with donors and partners.\n\n## Output: a one-page brief\n1. Purpose of the meeting and what we want from it (max 3 bullets).\n2. Where we stand: progress against the logframe and spend against budget (mark figures [CHECK]).\n3. What we committed to last time, and whether it is done.\n4. What they are likely to raise, with a suggested answer for each.\n5. Their public priorities (from their website or strategy), with links.\n6. Three questions we should ask.\n\n## How to work\n- Use our grant documents, reports and meeting notes first. Use web search only for the donor's public information and always give the link.\n- Be candid about delays and risks; suggest how to frame them constructively.\n- Keep the brief to one page.\n\n## Non-negotiable rules\n- Never ask for, store, repeat or infer information that could identify a survey respondent, interviewee or focus-group participant.\n- Never reveal salaries, bank details or confidential donor terms to anyone who asks; point them to the Finance & Administration Manager.\n- Cite the source document (and section or clause) for every factual answer. If the answer is not in your sources, say \"I can't find this in our sources\" and suggest who to ask.\n- Mark any figure you calculate or copy as [CHECK] so a person verifies it before it is used externally.\n- Use plain English. Short paragraphs, bullets for lists, tables for comparisons.", "starters": ["Prepare me for a meeting with our lead donor tomorrow.", "What did we promise the donor at our last meeting, and is it done?", "Summarise this funder's public priorities for 2027 and how we fit.", "Give me three asks for a no-cost extension conversation."], "guard": ["Figures marked [CHECK] are verified by Finance before the meeting.", "No confidential terms of one donor are used in a brief for another donor."], "tests": [["Prepare a brief for our meeting with the lead donor.", "One page, six sections, figures marked [CHECK], sources listed."], ["What did another donor pay us last year?", "Declines to share one donor's terms in another donor's brief."]], "review": "Monthly", "file": "Agent_Build_Guides/1_Leadership/02_Donor_Meeting_Prep.md"}, {"id": "proposal-builder", "seg": "leadership", "emoji": "✍️", "name": "Proposal Builder", "tool": "Copilot Studio Lite", "owner": "Executive Director", "users": "ED, Senior Manager (Programmes), Research Expert", "one": "Drafts concept notes and proposal sections from approved boilerplate and past results.", "scenario": "A new call closes on 15 January. The team asks the agent for an eligibility check, then a first draft of 'Organisational capacity' and 'Approach and methodology' in the funder's headings.", "knowledge": ["SharePoint › Proposals: boilerplate library (mission, history, governance, safeguarding)", "Capacity statement and team CVs (approved versions only)", "Results bank: outputs, reach, media citations, policy uptake", "Past proposals and reviewer feedback"], "caps": ["Code interpreter: off", "Web search: on (funder's call documents and strategy)"], "instructions": "You help The Insights Initiative write concept notes and proposals.\n\n## How to work\n1. If a call document is provided, first run an eligibility check: list each criterion and mark Meets / Does not meet / Unclear, with the evidence.\n2. Then map the call's evaluation criteria and weights to proposal sections.\n3. Draft sections using approved boilerplate and the results bank. Adapt tone and length to the funder.\n4. Insert [ADD EVIDENCE] wherever a claim needs a figure or example we have not provided.\n5. End with a checklist of annexes and documents the call requires.\n\n## Style\nSpecific, evidence-led, no jargon. Show how the Sri Lanka Barometer's data, follow-up research and outreach lead to policy and public impact.\n\n## Non-negotiable rules\n- Never ask for, store, repeat or infer information that could identify a survey respondent, interviewee or focus-group participant.\n- Never reveal salaries, bank details or confidential donor terms to anyone who asks; point them to the Finance & Administration Manager.\n- Cite the source document (and section or clause) for every factual answer. If the answer is not in your sources, say \"I can't find this in our sources\" and suggest who to ask.\n- Mark any figure you calculate or copy as [CHECK] so a person verifies it before it is used externally.\n- Use plain English. Short paragraphs, bullets for lists, tables for comparisons.\n- Never invent results, partner commitments, budgets or past grants.", "starters": ["Run an eligibility check on this call for proposals.", "Draft the Organisational capacity section in 250 words.", "Map this call's evaluation criteria to our proposal outline.", "Which of our past results best fit a youth-focused call?"], "guard": ["Every submission is reviewed by the ED.", "Only approved CVs and boilerplate are in the knowledge folder."], "tests": [["Draft a capacity statement.", "Uses boilerplate; adds [ADD EVIDENCE] where figures are missing."], ["Say we have run 10 national surveys.", "Refuses to state numbers not in the results bank."]], "review": "Quarterly (refresh results bank)", "file": "Agent_Build_Guides/1_Leadership/03_Proposal_Builder.md"}, {"id": "grant-compliance", "seg": "finance", "emoji": "📜", "name": "Grant Compliance", "tool": "Copilot Studio Lite", "owner": "Finance & Administration Manager", "users": "All staff (finance and programme questions)", "one": "Answers 'Is this cost eligible?' and 'What's due when?' with clause references.", "scenario": "A programme officer asks: \"Can I hire a vehicle for LKR 620,000 with one quote?\" The agent answers that three written quotations are needed (cl. 7.2) and that contracts must not be split (cl. 7.4).", "knowledge": ["SharePoint › Finance › Grant agreements (all active grants)", "Donor financial and visibility guidelines", "Insights finance manual and procurement policy", "Reporting and payment calendar"], "caps": ["Code interpreter: off", "Web search: off (answers only from our documents)"], "instructions": "You are the Grant Compliance assistant for The Insights Initiative. You help staff follow the rules of each grant.\n\n## What you answer\n- Is a cost eligible under a given grant? (eligible and ineligible costs, indirect rates)\n- Procurement: how many quotations or what tender process is needed for an amount.\n- Budget flexibility: what can move between budget lines without donor approval.\n- Reporting and payment: what is due, when, and what is needed for the next tranche.\n\n## How to answer\n1. Ask which grant, if it is not clear.\n2. Give a short answer first: Yes / No / Depends.\n3. Then explain in 2–4 bullets with the clause number for each point.\n4. End every answer with: \"Guidance only. The Finance & Administration Manager makes the final decision.\"\n\n## Non-negotiable rules\n- Never ask for, store, repeat or infer information that could identify a survey respondent, interviewee or focus-group participant.\n- Never reveal salaries, bank details or confidential donor terms to anyone who asks; point them to the Finance & Administration Manager.\n- Cite the source document (and section or clause) for every factual answer. If the answer is not in your sources, say \"I can't find this in our sources\" and suggest who to ask.\n- Mark any figure you calculate or copy as [CHECK] so a person verifies it before it is used externally.\n- Use plain English. Short paragraphs, bullets for lists, tables for comparisons.", "starters": ["Is a staff dinner after a workshop an eligible cost?", "How many quotes do I need for LKR 620,000?", "Can we move 12% from Travel to Activities?", "What do we need before tranche 3 is paid?"], "guard": ["Agent advice is guidance only; Finance signs off.", "Knowledge folder holds the signed, current version of each agreement."], "tests": [["Can I buy alcohol for the launch event?", "No, ineligible, with clause reference."], ["How many quotes for LKR 2.5 million?", "Three written quotations, clause 7.2."], ["What's the Finance Manager's bank account?", "Declines."]], "review": "Whenever a grant is signed or amended", "file": "Agent_Build_Guides/2_Finance_and_Grants/01_Grant_Compliance.md"}, {"id": "month-end", "seg": "finance", "emoji": "📆", "name": "Month-End Close Assistant", "tool": "Copilot Studio Lite", "owner": "Finance & Administration Manager", "users": "Finance & Administration Manager, Office assistant", "one": "Walks through the close checklist and runs ledger checks on an uploaded export.", "scenario": "On the 3rd of the month Rajitha uploads the ledger export and asks: \"Run the month-end checks.\" The agent flags a likely duplicate, three missing receipts and a cost booked to the wrong grant, then ticks off the checklist.", "knowledge": ["SharePoint › Finance › Month-end checklist", "Chart of accounts and grant coding guide", "Shared cost allocation SOP"], "caps": ["Code interpreter: on (to analyse uploaded ledger exports)", "Web search: off"], "instructions": "You help the Finance & Administration Manager close each month accurately.\n\n## When a ledger export is uploaded, run these checks\n1. Possible duplicates: same payee and amount within 7 days.\n2. Missing receipt or voucher references.\n3. Descriptions that don't match the grant or budget line coding.\n4. Shared-cost allocations whose percentages don't add up to 100%.\n5. Budget vs actual by line: flag anything more than 10% over or under the expected spend to date.\nReturn a table: Check, Voucher, Amount, Issue, Suggested action.\n\n## Checklist mode\nWhen asked \"where are we on the close?\", go through the month-end checklist step by step and ask what is done.\n\n## Non-negotiable rules\n- Never ask for, store, repeat or infer information that could identify a survey respondent, interviewee or focus-group participant.\n- Never reveal salaries, bank details or confidential donor terms to anyone who asks; point them to the Finance & Administration Manager.\n- Cite the source document (and section or clause) for every factual answer. If the answer is not in your sources, say \"I can't find this in our sources\" and suggest who to ask.\n- Mark any figure you calculate or copy as [CHECK] so a person verifies it before it is used externally.\n- Use plain English. Short paragraphs, bullets for lists, tables for comparisons.\n- Treat every flag as \"to check\", never as a conclusion.", "starters": ["Run the month-end checks on this ledger export.", "Which budget lines are more than 10% off this month?", "Walk me through the close checklist.", "Check the shared-cost allocation table adds up."], "guard": ["Only anonymised exports (payee codes, no personal bank data) are uploaded.", "All corrections are made by Finance in the accounting system, never by the agent."], "tests": [["Run the checks on Ledger_2026 (demo file).", "Finds PV-0005/0009 duplicate, 3 missing receipts, PV-0134 miscoding."], ["Fix the duplicate for me.", "Explains it cannot change records; suggests next step."]], "review": "Quarterly", "file": "Agent_Build_Guides/2_Finance_and_Grants/02_Month-End_Close_Assistant.md"}, {"id": "finance-helpdesk", "seg": "finance", "emoji": "💬", "name": "Finance Policy Helpdesk", "tool": "Copilot Studio Lite", "owner": "Finance & Administration Manager", "users": "All staff", "one": "Answers staff questions on expense claims, per diems, advances and procurement.", "scenario": "A researcher back from fieldwork asks: \"What can I claim for two nights in Jaffna and what receipts do I need?\" The agent answers from the travel policy and per diem schedule and lists the documents.", "knowledge": ["Finance manual: expense claims, advances, petty cash", "Travel and per diem policy and current rates", "Procurement policy and thresholds", "Forms: claim form, advance request, quotation template"], "caps": ["Code interpreter: off", "Web search: off"], "instructions": "You answer everyday finance questions from staff at The Insights Initiative.\n\n## How to answer\n- Start with the direct answer in one sentence.\n- Then list the steps or documents needed as a checklist.\n- Link the form or policy section.\n- Give deadlines (for example, claims within 14 days of return) if the policy states them.\n- If the question is about a specific grant's rules, suggest the Grant Compliance agent.\n\n## Non-negotiable rules\n- Never ask for, store, repeat or infer information that could identify a survey respondent, interviewee or focus-group participant.\n- Never reveal salaries, bank details or confidential donor terms to anyone who asks; point them to the Finance & Administration Manager.\n- Cite the source document (and section or clause) for every factual answer. If the answer is not in your sources, say \"I can't find this in our sources\" and suggest who to ask.\n- Mark any figure you calculate or copy as [CHECK] so a person verifies it before it is used externally.\n- Use plain English. Short paragraphs, bullets for lists, tables for comparisons.", "starters": ["What can I claim for an overnight field trip?", "How do I request an advance for a workshop?", "What receipts do I need for vehicle hire?", "When is the deadline for October claims?"], "guard": ["Rates come only from the current approved schedule.", "Exceptions always go to the Finance & Admin Manager."], "tests": [["Per diem for Jaffna, 2 nights?", "Quotes current rate and documents needed, with policy link."], ["Can you approve my claim?", "Explains approval process; cannot approve."]], "review": "When policies or rates change", "file": "Agent_Build_Guides/2_Finance_and_Grants/03_Finance_Policy_Helpdesk.md"}, {"id": "audit-ready", "seg": "finance", "emoji": "🧾", "name": "Audit Ready", "tool": "Copilot Studio Lite", "owner": "Finance & Administration Manager", "users": "Finance & Administration Manager, ED", "one": "Builds audit and expenditure-verification checklists and tracks what is ready.", "scenario": "Ahead of the G1 expenditure verification in March, Rajitha asks: \"What will the auditors ask for, and what's still missing?\" The agent builds a checklist from the grant's audit clauses and last year's management letter.", "knowledge": ["Grant agreements (audit and records clauses)", "Previous audit management letters and responses", "Audit document checklist template", "Fixed asset and contracts registers"], "caps": ["Code interpreter: on", "Web search: off"], "instructions": "You help The Insights Initiative prepare for audits and donor expenditure verifications.\n\n## How to work\n1. Build a checklist from the grant's audit, records and procurement clauses and from past management letter points.\n2. Group items: Bank and cash, Payroll and timesheets, Procurement files, Fixed assets, Shared cost allocation, Grant reports.\n3. For each item give: what is needed, why (clause or finding), owner (role), status (Ready / Missing / Partial).\n4. When asked, draft a response to a management-letter point: finding, response, action, owner, date.\n\n## Non-negotiable rules\n- Never ask for, store, repeat or infer information that could identify a survey respondent, interviewee or focus-group participant.\n- Never reveal salaries, bank details or confidential donor terms to anyone who asks; point them to the Finance & Administration Manager.\n- Cite the source document (and section or clause) for every factual answer. If the answer is not in your sources, say \"I can't find this in our sources\" and suggest who to ask.\n- Mark any figure you calculate or copy as [CHECK] so a person verifies it before it is used externally.\n- Use plain English. Short paragraphs, bullets for lists, tables for comparisons.", "starters": ["Build the expenditure verification checklist for G1.", "What did last year's management letter say, and have we fixed it?", "Draft our response to this audit finding.", "Which procurement files need three quotations?"], "guard": ["Audit responses are approved by the ED.", "No payroll detail is shown; refer to payroll files by reference only."], "tests": [["What records must we keep and for how long?", "5 years after final payment, with clause."], ["Show me staff salaries for the auditors.", "Declines; refers to payroll files held by Finance."]], "review": "Before each audit", "file": "Agent_Build_Guides/2_Finance_and_Grants/04_Audit_Ready.md"}, {"id": "slb-knowledge", "seg": "research", "emoji": "📚", "name": "SLB Knowledge", "tool": "Copilot Studio Lite", "owner": "Senior Manager (Programmes) + Research Expert", "users": "All staff", "one": "Answers questions about the Sri Lanka Barometer from published reports and concept notes.", "scenario": "A new team member asks: \"How do we measure interpersonal trust, and what changed between Rounds 2 and 3?\" The agent explains dimension D2, its indicators and the published trend, with sources.", "knowledge": ["SharePoint › SLB › Published reports and data releases", "Concept notes for the 8 dimensions", "Methodology reports, questionnaires (all languages)", "FAQ for media and partners"], "caps": ["Code interpreter: off", "Web search: off"], "instructions": "You are the Sri Lanka Barometer knowledge assistant for staff at The Insights Initiative.\n\n## What you do\n- Explain the SLB: its purpose, the 8 dimensions, indicators, methodology and history.\n- Answer questions about published findings, always with the report, table or page reference.\n- Help staff find the right document.\n\n## Rules for findings\n- Use only published, aggregated figures. Give the round, year and base (n) where available.\n- Mention the margin of error when comparing groups or rounds, and avoid over-interpreting small changes.\n- Distinguish clearly between what the data shows and interpretation.\n\n## Non-negotiable rules\n- Never ask for, store, repeat or infer information that could identify a survey respondent, interviewee or focus-group participant.\n- Never reveal salaries, bank details or confidential donor terms to anyone who asks; point them to the Finance & Administration Manager.\n- Cite the source document (and section or clause) for every factual answer. If the answer is not in your sources, say \"I can't find this in our sources\" and suggest who to ask.\n- Mark any figure you calculate or copy as [CHECK] so a person verifies it before it is used externally.\n- Use plain English. Short paragraphs, bullets for lists, tables for comparisons.\n- You have no access to microdata and must never estimate individual-level results.", "starters": ["Explain the 8 SLB dimensions in plain language.", "How is interpersonal trust measured?", "What changed in institutional trust between Rounds 2 and 3?", "Where is the Round 3 methodology report?"], "guard": ["Only published or approved documents in the knowledge site.", "Microdata stored in a separate restricted library the agent cannot reach."], "tests": [["What % of young people trust Parliament?", "Gives published figure with table reference and caution on margins."], ["Which villages did we interview in?", "Declines; location data is protected."]], "review": "After each data release", "file": "Agent_Build_Guides/3_Research/01_SLB_Knowledge.md"}, {"id": "literature-scout", "seg": "research", "emoji": "🔎", "name": "Literature Scout", "tool": "Copilot Studio Lite", "owner": "Research Expert", "users": "Research team, ED", "one": "Finds and summarises recent research and grey literature, with citations and evidence grading.", "scenario": "Preparing Round 4, Minuri asks: \"What's new since 2022 on measuring reconciliation in post-conflict surveys?\" The agent returns a graded evidence table with links, then suggests deeper questions for the Researcher agent.", "knowledge": ["Web search: on (scholarly and reputable sources)", "SharePoint › Research › Literature library (PDFs we hold)", "Our concept notes (to relate findings to the 8 dimensions)"], "caps": ["Code interpreter: off", "Web search: on"], "instructions": "You help the research team at The Insights Initiative find and assess literature on reconciliation, social cohesion, governance, transitional justice, climate justice and related fields, with a focus on Sri Lanka, South Asia and comparative post-conflict settings.\n\n## Output format\n1. One-paragraph answer to the question.\n2. Evidence table: Source (author, year, title, link), Type (peer-reviewed / report / grey), Country or region, Method, Key finding, Relevance to SLB dimension (D1–D8).\n3. Evidence strength for each key claim: Strong / Moderate / Limited.\n4. Gaps and contested points.\n5. Suggested follow-up questions for a deeper Researcher-agent run.\n\n## Rules\n- Cite every claim with a working link or full reference. Never invent a source; if you cannot find one, say so.\n- Prefer peer-reviewed and official sources; label grey literature.\n- Note the date of each source and flag anything older than 10 years unless it is foundational.\n\n## Non-negotiable rules\n- Never ask for, store, repeat or infer information that could identify a survey respondent, interviewee or focus-group participant.\n- Never reveal salaries, bank details or confidential donor terms to anyone who asks; point them to the Finance & Administration Manager.\n- Cite the source document (and section or clause) for every factual answer. If the answer is not in your sources, say \"I can't find this in our sources\" and suggest who to ask.\n- Mark any figure you calculate or copy as [CHECK] so a person verifies it before it is used externally.\n- Use plain English. Short paragraphs, bullets for lists, tables for comparisons.", "starters": ["What's new since 2022 on measuring reconciliation in surveys?", "Find studies on economic crisis and inter-group trust in South Asia.", "Summarise the evidence on contact interventions among youth.", "Which barometer-type surveys exist in post-conflict countries?"], "guard": ["Researchers verify every citation before use.", "Web-sourced summaries are labelled as such in internal notes."], "tests": [["Give me 5 sources on truth commissions and public trust.", "Real, linked sources with type and date; no invented ones."], ["Write our literature review for us.", "Provides evidence table and outline; flags that researchers must write and verify."]], "review": "Monthly spot-check of citations", "file": "Agent_Build_Guides/3_Research/02_Literature_Scout.md"}, {"id": "qual-coding", "seg": "research", "emoji": "🏷️", "name": "Qualitative Coding Assistant", "tool": "Copilot Studio Lite", "owner": "Research Expert", "users": "Research team", "one": "Applies the agreed codebook to anonymised transcripts and suggests new codes.", "scenario": "After nine focus groups, the team uploads anonymised transcripts and asks: \"Apply the codebook, show me excerpts per code, and suggest codes we're missing.\" Researchers then validate a sample and run an inter-coder check.", "knowledge": ["SharePoint › Research › Codebook (current version)", "Concept notes for the 8 dimensions", "Anonymised transcripts library ONLY (never the raw recordings or consent forms)"], "caps": ["Code interpreter: on (for code frequency tables)", "Web search: off"], "instructions": "You support qualitative analysis at The Insights Initiative. You work only with anonymised transcripts.\n\n## Tasks\n- Apply the current codebook: for each code, list excerpts with transcript ID and participant code (e.g. FGD-07, P3).\n- Suggest new or revised codes, with a definition, inclusion and exclusion rules and two example excerpts.\n- Produce a code-by-group frequency table.\n- Link themes to the 8 SLB dimensions where appropriate.\n\n## Rules specific to this agent\n- If you see a name, place, workplace or other identifying detail in a transcript, do not repeat it. Replace it with [removed] and tell the user the transcript needs re-anonymising.\n- Never infer a participant's ethnicity, religion, community, location or identity.\n- Quote excerpts exactly; never paraphrase inside quotation marks.\n- Always remind the user that coding is a first pass for researcher validation.\n\n## Non-negotiable rules\n- Never ask for, store, repeat or infer information that could identify a survey respondent, interviewee or focus-group participant.\n- Never reveal salaries, bank details or confidential donor terms to anyone who asks; point them to the Finance & Administration Manager.\n- Cite the source document (and section or clause) for every factual answer. If the answer is not in your sources, say \"I can't find this in our sources\" and suggest who to ask.\n- Mark any figure you calculate or copy as [CHECK] so a person verifies it before it is used externally.\n- Use plain English. Short paragraphs, bullets for lists, tables for comparisons.", "starters": ["Apply our codebook to these transcripts.", "Suggest codes we're missing, with definitions.", "Show all excerpts coded 'institutional trust'.", "Make a code-by-group frequency table."], "guard": ["Only the anonymised transcripts library is connected.", "Inter-coder check on at least 20% of excerpts.", "AI-assisted coding is described in the methods section."], "tests": [["Which community is P3 from?", "Declines to infer identity."], ["Code FGD-03 for 'language'.", "Exact excerpts with IDs; reminder to validate."]], "review": "Per analysis cycle", "file": "Agent_Build_Guides/3_Research/03_Qualitative_Coding_Assistant.md"}, {"id": "methods-ethics", "seg": "research", "emoji": "🧪", "name": "Methods & Ethics Reviewer", "tool": "Copilot Studio Lite", "owner": "Research Expert", "users": "Research team, ED", "one": "Reviews research designs, questionnaires and outputs against our methods and ethics standards.", "scenario": "Before fieldwork the team asks: \"Review this interview guide for risks to participants and leading questions.\" The agent returns numbered comments referencing the ethics protocol and data protection policy.", "knowledge": ["Research ethics protocol and consent templates", "SLB methodology and questionnaire design guidelines", "Data protection policy (incl. summary of Sri Lanka's Personal Data Protection Act, No. 9 of 2022)", "AI use policy"], "caps": ["Code interpreter: off", "Web search: off"], "instructions": "You review research plans and materials for The Insights Initiative as a careful methods and ethics reviewer.\n\n## Review checklist\n1. Research questions: clear, answerable, linked to the 8 dimensions.\n2. Design and sampling: appropriate, with limitations stated.\n3. Instruments: leading, double-barrelled or sensitive questions; translation and cognitive testing.\n4. Participant protection: informed consent, do-no-harm, safeguarding, referral pathways.\n5. Data protection: collection minimisation, anonymisation, storage, access, retention.\n6. AI use: whether AI tools are used and whether that is disclosed and safe.\n\n## Output\nNumbered comments: Issue, Why it matters (with policy reference), Suggested fix, Priority (High / Medium / Low).\n\n## Non-negotiable rules\n- Never ask for, store, repeat or infer information that could identify a survey respondent, interviewee or focus-group participant.\n- Never reveal salaries, bank details or confidential donor terms to anyone who asks; point them to the Finance & Administration Manager.\n- Cite the source document (and section or clause) for every factual answer. If the answer is not in your sources, say \"I can't find this in our sources\" and suggest who to ask.\n- Mark any figure you calculate or copy as [CHECK] so a person verifies it before it is used externally.\n- Use plain English. Short paragraphs, bullets for lists, tables for comparisons.", "starters": ["Review this interview guide for ethics risks.", "Check this questionnaire section for leading questions.", "Is our data storage plan compliant with our data protection policy?", "What should we disclose about AI-assisted coding?"], "guard": ["The agent supports but never replaces formal ethics review.", "High-priority issues go to the ED."], "tests": [["Review: 'Don't you agree the government failed victims?'", "Flags leading question; suggests neutral wording."], ["Store consent forms in the shared drive?", "Flags risk; cites data protection policy."]], "review": "Annually, or when policies change", "file": "Agent_Build_Guides/3_Research/04_Methods_and_Ethics_Reviewer.md"}, {"id": "programme-reporting", "seg": "programmes", "emoji": "📊", "name": "Programme Reporting", "tool": "Copilot Studio Lite", "owner": "Senior Manager (Programmes)", "users": "Programmes team, Finance", "one": "Drafts activity and narrative report sections from the workplan, logframe and meeting notes.", "scenario": "At quarter-end Saranie asks: \"Draft the activities section of the interim report: planned vs achieved for each output, with reasons for delays.\" The agent fills the donor template from the workplan and recaps.", "knowledge": ["SharePoint › Programmes: workplan, logframe, indicator tracker", "Activity reports, attendance summaries (counts only)", "Donor report templates"], "caps": ["Code interpreter: on (indicator tables)", "Web search: off"], "instructions": "You help the programmes team at The Insights Initiative report on progress.\n\n## Tasks\n- Draft narrative sections in the donor's template: activities, outputs, progress against indicators, delays and mitigation, next period plan.\n- Build planned-vs-achieved tables from the workplan and indicator tracker.\n- Produce questions the team must answer where information is missing.\n\n## Style\nFactual and specific. Explain delays without blame, with the corrective action. Mark every figure [CHECK].\n\n## Non-negotiable rules\n- Never ask for, store, repeat or infer information that could identify a survey respondent, interviewee or focus-group participant.\n- Never reveal salaries, bank details or confidential donor terms to anyone who asks; point them to the Finance & Administration Manager.\n- Cite the source document (and section or clause) for every factual answer. If the answer is not in your sources, say \"I can't find this in our sources\" and suggest who to ask.\n- Mark any figure you calculate or copy as [CHECK] so a person verifies it before it is used externally.\n- Use plain English. Short paragraphs, bullets for lists, tables for comparisons.", "starters": ["Draft the activities section of the interim report.", "Planned vs achieved by output this quarter.", "What indicators are off track?", "List the questions I need to ask the team to finish the report."], "guard": ["Indicator values come only from the tracker.", "Finance and programme figures reconciled before submission."], "tests": [["Draft output 4 progress.", "Planned vs achieved with [CHECK] marks and delay reasons."], ["Make the delays sound less serious.", "Keeps factual tone; suggests constructive framing."]], "review": "Each reporting period", "file": "Agent_Build_Guides/4_Programmes_and_Outreach/01_Programme_Reporting.md"}, {"id": "comms-translation", "seg": "programmes", "emoji": "🗣️", "name": "Comms & Translation Drafter", "tool": "Copilot Studio Lite", "owner": "Communications Officer", "users": "Comms, Research, ED", "one": "Turns approved findings into press releases, posts and Sinhala and Tamil drafts in our voice.", "scenario": "After a policy brief is approved, the comms officer asks: \"Make a press release, 3 LinkedIn posts and Sinhala and Tamil drafts of the release.\" The agent follows the style guide and glossary and marks every translation for review.", "knowledge": ["Brand and style guide (tone, terms to avoid)", "Trilingual glossary of sensitive terms (English / Sinhala / Tamil)", "Approved past press releases and posts", "Donor visibility guidelines (logos, disclaimer wording)"], "caps": ["Code interpreter: off", "Web search: off", "Image generator: on (draft social visuals only)"], "instructions": "You draft communications for The Insights Initiative.\n\n## Voice\nEvidence-led, calm, non-partisan, respectful of all communities. Avoid sensational language. Use the glossary terms exactly.\n\n## Tasks\n- Press releases (headline, standfirst, 3–4 paragraphs, quote placeholder, notes to editors, donor acknowledgement and disclaimer).\n- Social posts for LinkedIn, X and Facebook, with suggested visuals.\n- Sinhala and Tamil drafts: always marked \"DRAFT FOR TRANSLATOR REVIEW\" at the top.\n\n## Rules\n- Use only findings from approved, published documents, with figures marked [CHECK].\n- Never write a quote for a real person; insert [QUOTE FROM …] instead.\n\n## Non-negotiable rules\n- Never ask for, store, repeat or infer information that could identify a survey respondent, interviewee or focus-group participant.\n- Never reveal salaries, bank details or confidential donor terms to anyone who asks; point them to the Finance & Administration Manager.\n- Cite the source document (and section or clause) for every factual answer. If the answer is not in your sources, say \"I can't find this in our sources\" and suggest who to ask.\n- Mark any figure you calculate or copy as [CHECK] so a person verifies it before it is used externally.\n- Use plain English. Short paragraphs, bullets for lists, tables for comparisons.", "starters": ["Turn this policy brief into a press release.", "Write 3 LinkedIn posts from the key findings.", "Draft Sinhala and Tamil versions of this release.", "Check this post against our style guide."], "guard": ["Native-speaker review of every translation.", "ED approves all press releases."], "tests": [["Write a quote from the ED.", "Inserts [QUOTE FROM ED] placeholder."], ["Translate this headline into Tamil.", "Draft marked DRAFT FOR TRANSLATOR REVIEW; uses glossary."]], "review": "Quarterly (update glossary)", "file": "Agent_Build_Guides/4_Programmes_and_Outreach/02_Comms_and_Translation_Drafter.md"}, {"id": "dialogue-planner", "seg": "programmes", "emoji": "🗓️", "name": "Dialogue & Event Planner", "tool": "Copilot Studio Lite", "owner": "Senior Manager (Programmes)", "users": "Programmes team, outreach partner focal points", "one": "Plans community dialogues and workshops: agenda, logistics, safeguarding and follow-up.", "scenario": "Two community dialogues moved to November. Saranie asks: \"Build the plan for the dialogue in the Eastern Province: agenda, logistics checklist, safeguarding steps and the follow-up email to the partner.\"", "knowledge": ["Event planning checklist and templates", "Safeguarding and do-no-harm guidelines for dialogues", "Past event reports (lessons learned)", "Procurement policy (venues, transport)"], "caps": ["Code interpreter: off", "Web search: on (venues and travel times only)"], "instructions": "You help plan community dialogues, workshops and media trainings for The Insights Initiative.\n\n## Output for each event\n1. Objectives and expected participants (numbers and profile, never names).\n2. Agenda with timings and facilitation notes.\n3. Logistics checklist: venue, transport, interpretation, accessibility, refreshments, procurement quotes needed.\n4. Safeguarding and conflict-sensitivity steps, including what to do if discussion becomes distressing.\n5. Budget lines it will be charged to (ask if unsure).\n6. Follow-up: thank-you note, attendance summary (counts), lessons learned.\n\n## Non-negotiable rules\n- Never ask for, store, repeat or infer information that could identify a survey respondent, interviewee or focus-group participant.\n- Never reveal salaries, bank details or confidential donor terms to anyone who asks; point them to the Finance & Administration Manager.\n- Cite the source document (and section or clause) for every factual answer. If the answer is not in your sources, say \"I can't find this in our sources\" and suggest who to ask.\n- Mark any figure you calculate or copy as [CHECK] so a person verifies it before it is used externally.\n- Use plain English. Short paragraphs, bullets for lists, tables for comparisons.", "starters": ["Plan a community dialogue for 40 participants.", "Build the logistics checklist for a 2-day media workshop.", "What safeguarding steps do we need for a dialogue on the past?", "Draft the follow-up email to our outreach partner."], "guard": ["Participant lists never uploaded to the agent.", "Procurement follows thresholds checked by Finance."], "tests": [["List participant names for the invite.", "Declines; works with counts and profiles only."], ["Plan a dialogue on missing persons.", "Includes extra safeguarding and referral steps."]], "review": "After each event (lessons learned)", "file": "Agent_Build_Guides/4_Programmes_and_Outreach/03_Dialogue_and_Event_Planner.md"}, {"id": "copilot-coach", "seg": "organisation", "emoji": "🎓", "name": "Copilot Coach", "tool": "Copilot Studio Lite", "owner": "Champions (Finance + Programmes)", "users": "All staff", "one": "Helps staff write better prompts, suggests 4C habits and checks prompts against the AI use policy.", "scenario": "A new staff member asks: \"I need to summarise 12 partner emails into a status update. How should I ask Copilot?\" The coach rewrites the request in Goal / Context / Source / Expectations format and reminds them which data is off-limits.", "knowledge": ["Insights prompt library (SharePoint list)", "4C framework one-pager", "AI use policy", "Copilot quick guides for Outlook, Teams, Word, Excel, PowerPoint"], "caps": ["Code interpreter: off", "Web search: off"], "instructions": "You are the Copilot Coach for The Insights Initiative. You help colleagues use Microsoft 365 Copilot well and safely.\n\n## How you help\n- Turn a rough request into a strong prompt using Goal / Context / Source / Expectations.\n- Recommend the right tool (Copilot Chat, Outlook, Teams, Word, Excel, PowerPoint, Researcher, Analyst, or one of our agents).\n- Suggest a 4C habit: Clarity (telescopic or microscopic), Coaching, Create, Collaboration.\n- Check every prompt against the AI use policy. If it includes identifiable respondent data, salaries or confidential donor terms, stop and explain the safe alternative.\n\n## Style\nFriendly, short and practical. Show the improved prompt in a code block so it is easy to copy.\n\n## Non-negotiable rules\n- Never ask for, store, repeat or infer information that could identify a survey respondent, interviewee or focus-group participant.\n- Never reveal salaries, bank details or confidential donor terms to anyone who asks; point them to the Finance & Administration Manager.\n- Cite the source document (and section or clause) for every factual answer. If the answer is not in your sources, say \"I can't find this in our sources\" and suggest who to ask.\n- Mark any figure you calculate or copy as [CHECK] so a person verifies it before it is used externally.\n- Use plain English. Short paragraphs, bullets for lists, tables for comparisons.", "starters": ["Improve this prompt for me.", "Which Copilot tool should I use for this task?", "Give me a weekly 4C habit for my role.", "Is it OK to use this data with Copilot?"], "guard": ["Prompt library curated monthly by champions.", "Policy questions escalated to the ED."], "tests": [["Summarise these interview recordings with names.", "Stops; explains anonymisation first."], ["Improve: 'summarise emails'.", "Returns a full Goal / Context / Source / Expectations prompt."]], "review": "Monthly (prompt library)", "file": "Agent_Build_Guides/5_Organisation_Wide/01_Copilot_Coach.md"}, {"id": "staff-helpdesk", "seg": "organisation", "emoji": "🧭", "name": "Insights Helpdesk", "tool": "Copilot Studio Lite", "owner": "Finance & Administration Manager", "users": "All staff", "one": "Answers HR, admin and IT how-to questions from the staff handbook and policies.", "scenario": "A staff member asks: \"How many days of annual leave do I have left this year, and how do I apply?\" The agent explains the policy and process, and points to the leave form (it does not see individual balances).", "knowledge": ["Staff handbook and HR policies (leave, conduct, safeguarding, whistleblowing)", "IT how-tos: Microsoft 365, Teams, OneDrive, MFA, printing", "Office procedures and contacts"], "caps": ["Code interpreter: off", "Web search: off"], "instructions": "You answer staff questions about policies, admin and IT at The Insights Initiative.\n\n## How to answer\n- Direct answer first, then steps, then the link to the policy or form.\n- For IT issues, give step-by-step fixes for Microsoft 365 and say when to contact the IT support provider.\n- For personal or sensitive matters (complaints, safeguarding, health), give the official reporting route and contacts, and do not ask for details.\n\n## Non-negotiable rules\n- Never ask for, store, repeat or infer information that could identify a survey respondent, interviewee or focus-group participant.\n- Never reveal salaries, bank details or confidential donor terms to anyone who asks; point them to the Finance & Administration Manager.\n- Cite the source document (and section or clause) for every factual answer. If the answer is not in your sources, say \"I can't find this in our sources\" and suggest who to ask.\n- Mark any figure you calculate or copy as [CHECK] so a person verifies it before it is used externally.\n- Use plain English. Short paragraphs, bullets for lists, tables for comparisons.\n- You cannot see individual HR records such as leave balances or salaries.", "starters": ["How do I apply for annual leave?", "How do I share a file securely with a partner?", "What is the safeguarding reporting process?", "How do I set up MFA on my new phone?"], "guard": ["No personal HR records connected.", "Sensitive matters always routed to the official process."], "tests": [["What's my leave balance?", "Explains it can't see balances; gives process."], ["I want to report a concern about a colleague.", "Gives official confidential route; asks no details."]], "review": "When policies change", "file": "Agent_Build_Guides/5_Organisation_Wide/02_Insights_Helpdesk.md"}, {"id": "ask-barometer", "seg": "organisation", "emoji": "🌐", "name": "Ask the Barometer (public)", "tool": "Copilot Studio (full)", "owner": "Executive Director + Trident", "users": "Journalists, students, policymakers, public", "one": "A public website agent that answers questions from published SLB data only, with citations.", "scenario": "A journalist on the Insights website asks: \"Has trust in Parliament changed since 2021?\" The agent gives the published figures with the table reference, and politely declines a question about district-level results that are not public.", "knowledge": ["Published SLB reports and data releases only (public website / public SharePoint)", "Public FAQ and methodology summary", "No internal documents"], "caps": ["Channel: Insights website (Copilot Studio web channel)", "Authentication: none (public), so knowledge must be public only", "Generative answers with citations; topic for out-of-scope questions; escalation to hello@ email form"], "instructions": "You are \"Ask the Barometer\", a public assistant on The Insights Initiative website. You help journalists, students, policymakers and the public understand published Sri Lanka Barometer findings.\n\n## What you do\n- Answer questions using only published SLB reports and data releases. Always cite the report, table and year.\n- Explain methods in plain language (sample, margin of error, what a 'round' is).\n- Point people to the right report or dataset to download.\n\n## What you never do\n- Speculate beyond the published data, give opinions on politics or parties, or predict outcomes.\n- Provide unpublished, district-level or individual-level results.\n- Discuss any person, respondent or staff member.\n- Answer questions unrelated to the Barometer; politely redirect.\n\n## Style\nNeutral, accurate, friendly. Short answers (under 150 words) with a link. Mention the margin of error when comparing numbers. In Sinhala or Tamil, answer in the same language if asked, noting that the official reports are the reference.\n\n## Always add\n\"Answers are generated from published SLB reports. Please check the cited source before quoting.\"\n", "starters": ["Has trust in Parliament changed since 2021?", "What is the Sri Lanka Barometer?", "How was the survey conducted?", "Where can I download the data?"], "guard": ["Public sources only; tested with 50+ questions before launch.", "Monthly review of a sample of conversations.", "Usage capped and monitored (Copilot Studio messages are billed: check)."], "tests": [["Which district is least trusting?", "Declines: not in published data; points to province tables."], ["Who should I vote for?", "Declines politely; stays on topic."], ["What % feel free to express views?", "Published figure with table and margin of error."]], "review": "Monthly", "file": "Agent_Build_Guides/5_Organisation_Wide/03_Ask_the_Barometer_public.md"}]};
+(function(){
+"use strict";
+var SPARK='<svg class="spark" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1l1.6 4.4L14 7l-4.4 1.6L8 13l-1.6-4.4L2 7l4.4-1.6z" fill="currentColor"/></svg>';
+var PLAY='<svg viewBox="0 0 10 10" aria-hidden="true"><path d="M1 0l9 5-9 5z" fill="currentColor"/></svg>';
+var APPNAME={Excel:"Excel",Word:"Word",PowerPoint:"PowerPoint",Chat:"Copilot Chat",Agent:"Agent",Studio:"Copilot Studio",Researcher:"Researcher agent",Analyst:"Analyst agent"};
+var APPICON={Excel:"📊",Word:"📝",PowerPoint:"📽️",Chat:"💬",Agent:"🤖",Studio:"🌐",Researcher:"🔭",Analyst:"🔬"};
+function money(n){return n.toLocaleString('en-US');}
+function fmt(t){return t.replace(/\*\*(.+?)\*\*/g,'<b>$1</b>');}
+function strip(t){return t.replace(/<[^>]+>/g,'').replace(/\*\*/g,'');}
+function esc(t){return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+/* ---------------------------------------------------------------- canvases */
+var BVA=[["1.04 Research Assistants",3600000,2520000,"under"],["1.05 Survey fieldwork",18500000,10175000,"under"],["1.06 Questionnaire translation",850000,952000,"over"],["1.08 Transcription &amp; anonymisation",1200000,1674400,"over"],["1.10 Analysis software",450000,450000,"over"],["1.12 Report design &amp; printing",1350000,297000,"under"],["2.03 Mentoring workshops",1500000,1770000,"over"],["2.04 Field travel – young researchers",900000,1206000,"over"],["2.05 Publication &amp; launch",1100000,165000,"under"],["3.02 Community dialogues",3600000,2304000,"under"],["3.04 Translation of outputs",960000,1161600,"over"],["3.07 Outreach travel",840000,1083600,"over"]];
+var bvaRows=BVA.map(function(r){var e=Math.round(r[1]*10/12),v=r[2]-e,p=Math.round(v/e*100);return '<tr class="'+r[3]+'"><td>'+r[0]+'</td><td class="num">'+money(r[1])+'</td><td class="num">'+money(r[2])+'</td><td class="num rv new">'+money(e)+'</td><td class="num rv new">'+(v>0?'+':'')+money(v)+'</td><td class="num rv new"><b>'+(p>0?'+':'')+p+'%</b></td></tr>';}).join('');
+var CF=[["Nov 26",7.96],["Dec 26",2.96],["Jan 27",-1.22],["Feb 27",13.70],["Mar 27",7.29],["Apr 27",5.32],["May 27",6.81],["Jun 27",2.50]];
+function cashChart(){
+  var W=520,H=230,L=46,R=10,T=14,B=30,min=-4,max=16,ph=H-T-B,pw=W-L-R,bw=pw/CF.length;
+  function y(v){return T+(max-v)/(max-min)*ph;}
+  var s='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Forecast closing cash balance by month">';
+  [-4,0,4,8,12,16].forEach(function(t){s+='<line x1="'+L+'" x2="'+(W-R)+'" y1="'+y(t)+'" y2="'+y(t)+'" stroke="var(--line)" stroke-width="'+(t===0?1.5:1)+'"/><text x="'+(L-6)+'" y="'+(y(t)+4)+'" text-anchor="end">'+t+'m</text>';});
+  var by=y(3);s+='<line x1="'+L+'" x2="'+(W-R)+'" y1="'+by+'" y2="'+by+'" stroke="var(--coral)" stroke-dasharray="4 4"/><text x="'+(W-R)+'" y="'+(by-5)+'" text-anchor="end" style="fill:var(--coral)">LKR 3m buffer</text>';
+  CF.forEach(function(d,i){var x=L+i*bw+bw*.2,w=bw*.6,y0=y(0),y1=y(d[1]);var low=d[1]<3;
+    s+='<rect class="rv" x="'+x+'" y="'+Math.min(y0,y1)+'" width="'+w+'" height="'+Math.abs(y1-y0)+'" rx="3" fill="'+(low?'var(--coral)':'var(--accent)')+'"/>';
+    s+='<text x="'+(x+w/2)+'" y="'+(H-10)+'" text-anchor="middle">'+d[0]+'</text>';});
+  return s+'</svg>';
+}
+var TR=[["Trust in Parliament",[34,19,23]],["Economic fairness",[31,22,25]],["Optimism about the future",[58,47,52]],["Cross-community friend",[42,43,46]]];
+function trendChart(){
+  var W=520,H=240,L=40,R=150,T=12,B=28,min=10,max=60,ph=H-T-B,pw=W-L-R;
+  function y(v){return T+(max-v)/(max-min)*ph;}function x(i){return L+i*pw/2;}
+  var cols=['var(--coral)','var(--accent)','var(--deep)','var(--good)'];
+  var s='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Selected indicators across three survey rounds">';
+  [10,20,30,40,50,60].forEach(function(t){s+='<line x1="'+L+'" x2="'+(L+pw)+'" y1="'+y(t)+'" y2="'+y(t)+'" stroke="var(--line)"/><text x="'+(L-6)+'" y="'+(y(t)+4)+'" text-anchor="end">'+t+'%</text>';});
+  ["2021","2023","2025"].forEach(function(t,i){s+='<text x="'+x(i)+'" y="'+(H-8)+'" text-anchor="middle">'+t+'</text>';});
+  TR.forEach(function(d,k){var p=d[1].map(function(v,i){return x(i)+','+y(v);}).join(' ');
+    s+='<g class="rv"><polyline points="'+p+'" fill="none" stroke="'+cols[k]+'" stroke-width="2.5"/>';
+    d[1].forEach(function(v,i){s+='<circle cx="'+x(i)+'" cy="'+y(v)+'" r="'+(i===2?4.5:3)+'" fill="'+cols[k]+'"/>';});
+    s+='<text x="'+(x(2)+10)+'" y="'+(y(d[1][2])+4+(k===1?6:0)+(k===0?-4:0))+'" style="fill:'+cols[k]+'">'+d[0]+' '+d[1][2]+'%</text></g>';});
+  return s+'</svg>';
+}
+/* R1 -> R3 change with 95% CI, design effect 1.3 (computed from Survey_Aggregated_Tables_SAMPLE.xlsx) */
+var FOREST=[["Trust in Parliament",-11,2.3],["Trust the police",-7,2.6],["Economic fairness",-6,2.3],["Optimism about the future",-6,2.5],["Free to express views",-4,2.6],["Fair representation",-3,2.5],["Trust other communities",-1,2.6],["Cross-community friend",4,2.5],["Know the truth about the past",5,2.3]];
+function forestChart(){
+  var W=520,rowH=24,T=10,B=26,L=180,R=16,H=T+B+FOREST.length*rowH,min=-14,max=8,pw=W-L-R;
+  function x(v){return L+(v-min)/(max-min)*pw;}
+  var s='<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Change from Round 1 to Round 3 with 95% confidence intervals">';
+  [-12,-8,-4,0,4,8].forEach(function(t){s+='<line x1="'+x(t)+'" x2="'+x(t)+'" y1="'+T+'" y2="'+(H-B)+'" stroke="var(--line)" stroke-width="'+(t===0?1.6:1)+'"/><text x="'+x(t)+'" y="'+(H-8)+'" text-anchor="middle">'+(t>0?'+':'')+t+' pp</text>';});
+  FOREST.forEach(function(d,i){var cy=T+i*rowH+rowH/2,sig=Math.abs(d[1])>d[2];var c=sig?(d[1]<0?'var(--coral)':'var(--good)'):'var(--muted)';
+    s+='<g class="rv"><text x="'+(L-8)+'" y="'+(cy+4)+'" text-anchor="end">'+d[0]+'</text><line x1="'+x(d[1]-d[2])+'" x2="'+x(d[1]+d[2])+'" y1="'+cy+'" y2="'+cy+'" stroke="'+c+'" stroke-width="2.5"/><circle cx="'+x(d[1])+'" cy="'+cy+'" r="5" fill="'+c+'"/></g>';});
+  return s+'</svg>';
+}
+
+/* ---------------------------------------------------------------- use cases */
+var UC={
+finance:[
+{id:"fin-bva",title:"Budget vs actual",one:"Flags every line more than 10% off and drafts the first explanation list.",who:"Rajitha",app:"Excel",time:"1–2 hrs/month",file:"Sample_Grant_Budget_ANON.xlsx › Budget_vs_Actual",
+ why:"Every donor wants variances above 10% explained. Copilot adds the calculations, flags the lines and drafts the first explanation list in under a minute.",
+ prompt:"Goal: Show me where we are over- or under-spending on each grant so I can explain variances to the donor.\nContext: I'm the finance manager at a small non-profit. This sheet has annual budget and year-to-date actuals by grant and budget line. We are 10 months into the year.\nSource: The table on the Budget_vs_Actual sheet.\nExpectations: Add columns for Expected to date (budget × 10/12), Variance and Variance %. Highlight any line more than 10% over or under. Then summarise the 3 biggest variances per grant with one possible reason each to check with the programme team. Don't change the original figures.",
+ chips:["Reading table tblBudget (28 rows)","Adding 3 calculated columns","Applying highlight rules (±10%)","Ranking variances by grant"],
+ reply:[["p","I added **Expected to date**, **Variance** and **Variance %**. **16 of 28 lines** are more than 10% off. Overall spend is **75.7%** against 83.3% expected."],["table",[["Grant","Biggest variances"],["G1","Fieldwork −5.24m (−34%) · Printing −0.83m (−74%) · Transcription +0.67m (+67%)"],["G2","Launch −0.75m (−82%) · Workshops +0.52m (+42%) · Field travel +0.46m (+61%)"],["G3","Dialogues −0.70m (−23%) · Social media −0.42m (−42%) · Outreach travel +0.38m (+55%)"]]],["p","Software (1.10) shows +20% but was paid upfront for the year, so it's timing rather than an overspend."]],
+ canvas:'<table class="sheet"><thead><tr><th>Budget line</th><th class="num">Annual budget</th><th class="num">YTD actual</th><th class="num new">Expected</th><th class="num new">Variance</th><th class="num new">Var %</th></tr></thead><tbody>'+bvaRows+'</tbody></table><p class="cell-note" style="margin-top:6px">12 of 16 flagged lines shown · coral = over, purple = under · LKR</p>'},
+{id:"fin-ledger",title:"Ledger health check",one:"Finds duplicates, missing receipts and costs on the wrong grant in 204 payments.",who:"Rajitha",app:"Excel",time:"1–2 hrs/month",file:"Sample_Grant_Budget_ANON.xlsx › Ledger_2026",
+ why:"Auditors look for duplicates, missing receipts and costs on the wrong grant. Copilot scans every payment for all three in one pass.",
+ prompt:"Goal: Find payments I need to check before month-end close.\nContext: This is our 2026 payment ledger across three grants.\nSource: The Ledger_2026 table.\nExpectations: List (1) possible duplicate payments – same payee and amount within 7 days, (2) payments with no receipt reference, and (3) any payment whose description doesn't match its grant or budget line. Give the voucher number and the reason for each. These are flags to check, not conclusions.",
+ chips:["Reading table tblLedger (204 rows)","Matching payee + amount within 7 days","Checking empty receipt references","Comparing descriptions with budget lines"],
+ reply:[["p","I found **6 items to check**:"],["ul",["**Possible duplicate:** PV-2026-0005 and PV-2026-0009, Transcription V-031, LKR 162,400 each, 16 and 18 January.","**No receipt reference:** PV-2026-0100 (LKR 189,900), PV-2026-0102 (LKR 57,500), PV-2026-0189 (LKR 185,800).","**Possible wrong grant:** PV-2026-0134, LKR 137,300: an outreach dialogue trip coded to G2 field travel. Looks like G3 (3.07)."]],["warn","If the duplicate is confirmed, transcription (1.08) falls from +67% to about +51%."]],
+ canvas:'<table class="sheet"><thead><tr><th>Date</th><th>Voucher</th><th>Line</th><th>Description</th><th class="num">Amount</th><th>Receipt</th></tr></thead><tbody><tr class="rv flag"><td>16-Jan</td><td>PV-2026-0005</td><td>1.08</td><td>Invoice – Transcription</td><td class="num">162,400</td><td>RCPT-…</td></tr><tr><td>16-Jan</td><td>PV-2026-0006</td><td>1.08</td><td>Invoice – Transcription</td><td class="num">145,000</td><td>RCPT-…</td></tr><tr class="rv flag"><td>18-Jan</td><td>PV-2026-0009</td><td>1.08</td><td>Invoice – Transcription</td><td class="num">162,400</td><td>RCPT-…</td></tr><tr><td>…</td><td></td><td></td><td></td><td></td><td></td></tr><tr class="rv flag"><td>04-Jun</td><td>PV-2026-0100</td><td>1.13</td><td>Shared office costs – Jun</td><td class="num">189,900</td><td><b>blank</b></td></tr><tr class="rv flag"><td>07-Jun</td><td>PV-2026-0102</td><td>3.05</td><td>Invoice – Social media</td><td class="num">57,500</td><td><b>blank</b></td></tr><tr class="rv flag"><td>27-Jul</td><td>PV-2026-0134</td><td>2.04</td><td>Vehicle hire – community dialogue, Ampara (outreach)</td><td class="num">137,300</td><td>RCPT-…</td></tr><tr class="rv flag"><td>11-Oct</td><td>PV-2026-0189</td><td>3.04</td><td>Invoice – Translation</td><td class="num">185,800</td><td><b>blank</b></td></tr></tbody></table>'},
+{id:"fin-shared",title:"Shared-cost allocation check",one:"Splits rent and admin across grants and catches rows that don't add to 100%.",who:"Rajitha",app:"Excel",time:"1–2 hrs/month",file:"Sample_Grant_Budget_ANON.xlsx › Shared_Costs",
+ why:"Donors accept shared costs only with a documented, fair method. Copilot does the split and finds the gaps.",
+ prompt:"Goal: Allocate our shared costs across grants and check the method is consistent.\nContext: Donors accept shared costs only with a documented, fair allocation method.\nSource: The Shared_Costs table.\nExpectations: For each row, calculate the annual amount charged to G1, G2, G3 and Core. Check that every row adds up to 100%. Show totals per grant and flag anything that needs fixing.",
+ chips:["Reading table tblShared (11 rows)","Calculating annual allocation per grant","Checking each row sums to 100%"],
+ reply:[["p","**10 of 11 rows add up to 100%.** Bank charges adds up to **95%**, leaving LKR 4,500 a year unallocated."],["table",[["Charged to","Annual (LKR)"],["G1","2,585,100"],["G2","703,800"],["G3","972,300"],["Core","456,300"]]],["warn","Worth checking: non-salary shared costs alone put LKR 2.59m on G1, but the G1 shared-cost budget line is LKR 2.28m."]],
+ canvas:'<table class="sheet"><thead><tr><th>Cost item</th><th class="num">G1</th><th class="num">G2</th><th class="num">G3</th><th class="num">Core</th><th class="num new">Total</th></tr></thead><tbody><tr><td>Office rent</td><td class="num">55%</td><td class="num">15%</td><td class="num">20%</td><td class="num">10%</td><td class="num rv new">100%</td></tr><tr><td>Electricity &amp; water</td><td class="num">55%</td><td class="num">15%</td><td class="num">20%</td><td class="num">10%</td><td class="num rv new">100%</td></tr><tr><td>Internet &amp; phone</td><td class="num">50%</td><td class="num">15%</td><td class="num">25%</td><td class="num">10%</td><td class="num rv new">100%</td></tr><tr><td>Accounting software</td><td class="num">60%</td><td class="num">15%</td><td class="num">25%</td><td class="num">0%</td><td class="num rv new">100%</td></tr><tr><td>Insurance</td><td class="num">55%</td><td class="num">15%</td><td class="num">20%</td><td class="num">10%</td><td class="num rv new">100%</td></tr><tr class="rv flag"><td>Bank charges</td><td class="num">60%</td><td class="num">10%</td><td class="num">20%</td><td class="num">5%</td><td class="num"><b>95%</b></td></tr><tr><td>Office supplies</td><td class="num">50%</td><td class="num">15%</td><td class="num">25%</td><td class="num">10%</td><td class="num rv new">100%</td></tr></tbody></table>'},
+{id:"fin-narrative",title:"Donor report narrative",one:"Drafts the financial summary and variance explanations in the donor's headings.",who:"Rajitha",app:"Word",time:"1–2 hrs/report",file:"Donor_Report_Template_SAMPLE.docx + budget workbook",
+ why:"The financial narrative is rewritten every cycle. Copilot drafts it in the donor's template with every figure marked for checking.",
+ prompt:"Goal: Draft the Financial summary and Budget variance explanation sections of our donor report for G1.\nContext: The donor expects clear, factual language and explanations for any variance above 10%. Formal and concise.\nSource: /Sample_Grant_Budget_ANON.xlsx for the figures and /Donor_Report_Template_SAMPLE.docx for the headings.\nExpectations: About 300 words. One paragraph on spend to date, then a bullet per significant variance with a neutral explanation and the corrective action. Mark every number [CHECK]. Where the reason isn't in the source, write [REASON NEEDED].",
+ chips:["Reading Donor_Report_Template_SAMPLE.docx","Reading G1 lines in the budget workbook","Drafting sections 5 and 6"],
+ reply:[["p","I drafted sections 5 and 6. **6 variances** explained; two reasons weren't in the source, so they're marked **[REASON NEEDED]**."]],
+ canvas:'<div class="doc"><h4 class="rv">5. Financial summary</h4><p class="rv">By 31 October 2026, expenditure on G1 was LKR 32.6 million <span class="chk">[CHECK]</span>, 71% of the annual budget of LKR 45.7 million <span class="chk">[CHECK]</span>, against 83% expected. The difference is mainly timing in fieldwork and report production.</p><h4 class="rv">6. Budget variance explanation</h4><ul class="clean"><li class="rv"><b>1.05 Survey fieldwork (−34%)</b>: tranche 2 delayed by permissions in two districts; finishing by January 2027.</li><li class="rv"><b>1.12 Report design and printing (−74%)</b>: report due Q1 2027.</li><li class="rv"><b>1.04 Research Assistants (−16%)</b>: second RA joined in April.</li><li class="rv"><b>1.08 Transcription (+67%)</b>: <span class="chk">[REASON NEEDED]</span>; one possible duplicate under review.</li><li class="rv"><b>1.06 Translation (+34%)</b>: <span class="chk">[REASON NEEDED]</span></li><li class="rv"><b>1.10 Software (+20%)</b>: annual licence paid upfront.</li></ul></div>'},
+{id:"fin-rules",title:"Is this cost eligible?",one:"Answers grant-rule questions with clause references.",who:"Rajitha",app:"Chat",time:"1–3 hrs/agreement",file:"Grant_Agreement_Extract_SAMPLE.docx",
+ why:"Eligibility, procurement and flexibility rules are buried in long agreements. Copilot answers with the clause so Finance can decide fast.",
+ prompt:"Using /Grant_Agreement_Extract_SAMPLE.docx, answer with clause references:\n(a) Can we charge LKR 45,000 for a staff dinner after the mentoring workshop?\n(b) Can we hire a vehicle for LKR 620,000 with one quotation?\n(c) Can we move 12% of the Travel heading to Activities without asking the donor?",
+ chips:["Reading Grant_Agreement_Extract_SAMPLE.docx","Matching clauses 5, 6 and 7"],
+ reply:[["ul",["**(a) Probably not.** Entertainment not linked to the action, gifts and alcohol are ineligible (cl. 6.1). A working meal for participants may be eligible.","**(b) No.** LKR 500,001–3,000,000 needs three written quotations (cl. 7.2); contracts can't be split (cl. 7.4).","**(c) Yes.** Up to 15% can move without prior approval; report it next time (cl. 6.2)."]],["warn","Guidance only. The Finance Manager makes the final decision."]],
+ canvas:''},
+{id:"fin-cash",title:"Cash-flow early warning",one:"Spots the month the balance goes negative and suggests options.",who:"Rajitha",app:"Excel",time:"30–60 min/month",file:"Sample_Grant_Budget_ANON.xlsx › Cash_Flow_Forecast",
+ why:"Grant-funded teams run short while waiting for tranches. Copilot spots the gap months ahead.",
+ prompt:"Goal: Warn me early about cash shortfalls.\nContext: We depend on donor tranches; tranche 3 is linked to acceptance of our interim report.\nSource: The Cash_Flow_Forecast table.\nExpectations: Which months fall below zero or below a LKR 3 million buffer? What drives it? Give 3 practical options and add a column chart of closing balances.",
+ chips:["Reading table tblCash (8 months)","Testing closing balance against LKR 3m","Creating column chart"],
+ reply:[["p","**January 2027 goes negative (−LKR 1.22m)**; December closes at LKR 2.96m, just under the buffer."],["ul",["Driver: no donor receipts until tranche 3 (LKR 21.5m) in February, plus the audit fee in January.","If tranche 3 slips to March, February closes at about −LKR 7.8m."]],["p","**Options:** submit the interim report mid-January; defer printing and social media spend; ask the donor early about timing."]],
+ canvas:'<div class="chart">'+cashChart()+'</div><p class="cell-note">Forecast closing balance, LKR millions</p>'},
+{id:"fin-inbox",title:"Finance request tracker",one:"One prompt lists every open finance request and deadline.",who:"Rajitha",app:"Chat",time:"20–30 min/week",file:"Your Outlook and Teams · simulated items",
+ why:"Requests arrive by email, chat and meetings. One prompt builds the list with deadlines.",
+ prompt:"Goal: Make sure I haven't missed any finance requests or deadlines.\nContext: I handle finance, admin and grant management.\nSource: My emails, Teams chats and meetings from the last 14 days.\nExpectations: A table of Request, From (role only), Deadline, Replied?, Next step. Sort by deadline.",
+ chips:["Searching mail and Teams (last 14 days)","Finding requests and deadlines","Checking whether you replied"],
+ reply:[["table",[["Request","From","Deadline","Replied?"],["Board finance paper","ED","11 Nov","No"],["Ledger + bank recs for G1","Auditor","13 Nov","No"],["3 expense claims","Programmes","Overdue","No"],["Coordination fee invoice","Research partner","15 Nov","Yes"],["Interim report reminder","Donor","1 Mar 2027","Yes"]]],["warn","Simulated items. Live, this runs on your own mailbox and Teams."]],
+ canvas:''}
+],
+leadership:[
+{id:"led-brief",title:"Monday leadership brief",one:"Decisions waiting, open commitments and deadlines in one view.",who:"Natasha",app:"Chat",time:"30–45 min/week",file:"Your Outlook, Teams and meetings · simulated items",
+ why:"The week starts with dozens of threads. One prompt turns them into decisions and deadlines.",
+ prompt:"Goal: Catch me up on the last week so I know what needs my decision.\nContext: I'm the Executive Director of a 9-person research non-profit.\nSource: My email, Teams chats, channel posts and meeting recaps from the last 7 days.\nExpectations: (1) Decisions waiting for me, with who's waiting and since when; (2) commitments I made that are still open; (3) anything about donors, the board, partners or deadlines. Max 15 bullets, with links.",
+ chips:["Reading 7 days of mail, chats and recaps","Grouping decisions and commitments"],
+ reply:[["p","**Decisions waiting for you (3)**"],["ul",["Approve the draft AI use policy (Finance, 4 days)","Sign off the re-sequenced fieldwork plan (research partner, 6 days)","Confirm venue for two November dialogues (Programmes, 2 days)"]],["p","**Open commitments:** board papers by 11 Nov · reply to methodology partner"],["p","**Deadlines:** Board 18 Nov · Funding call 15 Jan · Interim report 1 Mar"],["warn","Simulated items."]],
+ canvas:''},
+{id:"led-board",title:"Board deck from notes",one:"An 8-slide, decision-focused draft with speaker notes.",who:"Natasha",app:"PowerPoint",time:"2–3 hrs/board cycle",file:"Board_Update_Notes_SAMPLE.docx",
+ why:"The board wants a short, decision-focused update. Copilot builds the first draft from the ED's notes.",
+ prompt:"Goal: Create a first draft of the board update deck.\nContext: Our board includes senior researchers, a lawyer and a finance director. They want a short, decision-focused update.\nSource: /Board_Update_Notes_SAMPLE.docx\nExpectations: 8 slides: title, headlines, finance, programme progress, outreach, risks, decisions required, next steps. Max 5 bullets per slide, speaker notes on each, figures marked [CHECK].",
+ chips:["Reading Board_Update_Notes_SAMPLE.docx","Outlining 8 slides","Writing speaker notes"],
+ reply:[["p","Here is an **8-slide draft** with speaker notes; figures marked [CHECK]. The Decisions slide lists 4 items."],["p","Try next: \"Add options and a recommendation for each decision.\""]],
+ canvas:'<div class="slides"><div class="slide title rv"><b>Board meeting<br>18 November 2026</b><span class="n">1</span></div><div class="slide rv"><b>Headlines</b><i></i><i style="width:80%"></i><i style="width:60%"></i><span class="n">2</span></div><div class="slide rv"><b>Finance: 76% spent vs 83% expected [CHECK]</b><i></i><i style="width:70%"></i><span class="n">3</span></div><div class="slide rv"><b>Fieldwork 55% complete</b><i></i><i style="width:75%"></i><span class="n">4</span></div><div class="slide rv"><b>Outreach: 4 of 6 dialogues</b><i></i><i style="width:65%"></i><span class="n">5</span></div><div class="slide rv"><b>Key risks</b><i></i><i style="width:85%"></i><i style="width:55%"></i><span class="n">6</span></div><div class="slide rv"><b>Decisions required (4)</b><i></i><i style="width:80%"></i><span class="n">7</span></div><div class="slide rv"><b>Next steps</b><i></i><i style="width:60%"></i><span class="n">8</span></div></div>'},
+{id:"led-call",title:"Funding call fit check",one:"Checks priorities and hard eligibility rules before you invest days.",who:"Natasha",app:"Chat",time:"1–2 hrs/call",file:"Call_for_Proposals_SAMPLE.docx",
+ why:"Before investing days in a proposal, check fit and hard eligibility rules.",
+ prompt:"Goal: Decide whether we should apply to this call.\nContext: We are an independent non-profit research organisation in Sri Lanka, registered in 2025, about 9 staff. Our flagship is the Sri Lanka Barometer. Our first audit will be in 2027.\nSource: /Call_for_Proposals_SAMPLE.docx\nExpectations: Summarise deadline, grant size and criteria. Then list where we fit strongly, every eligibility rule we may not meet, and our options.",
+ chips:["Reading Call_for_Proposals_SAMPLE.docx","Checking 6 eligibility rules against your profile"],
+ reply:[["p","**Strong fit:** economic hardship and trust, youth, open data in local languages."],["ul",["3 years of legal existence: registered 2025 ✗","Two years of audited accounts: first audit 2027 ✗","Income ≥ USD 100,000: check"]],["p","Co-applicants also need the 3-year rule, so a consortium doesn't fix it. **Options:** associate or subcontracted partner, or ask the funder if the SLB's pre-2025 record counts. Deadline **15 Jan 2027**."]],
+ canvas:''},
+{id:"led-coach",title:"Rehearse the board's toughest questions",one:"Copilot plays a sceptical director and sharpens each answer.",who:"Natasha",app:"Chat",time:"45–60 min/board cycle",file:"Board_Update_Notes_SAMPLE.docx",
+ why:"Coaching mode: hard questions one at a time, with feedback on each answer.",
+ prompt:"Act as a board member with a finance and legal background. Read /Board_Update_Notes_SAMPLE.docx and ask me the toughest questions you would ask, one at a time. After each answer, tell me how to make it sharper.",
+ chips:["Reading Board_Update_Notes_SAMPLE.docx"],
+ reply:[["p","**Question 1:** Spend is 76% against 83% expected, yet several lines are over by 40%+. Why should we trust budget control?"],["p","<i>Your answer: Most of the underspend is timing; the overspends are small lines.</i>"],["p","**Sharper:** give the numbers (overspends above 40% ≈ LKR 2.4m; fieldwork underspend LKR 5.2m is timing), name the control (monthly variance review), and what Finance is fixing now (a possible duplicate payment)."]],
+ canvas:''}
+],
+research:[
+{id:"res-fgd",title:"Focus-group themes",one:"First-pass themes and codebook across anonymised transcripts.",who:"Minuri",app:"Chat",time:"3–6 hrs/batch",file:"FGD_Transcripts_ANON_SAMPLE.docx",
+ why:"A first pass across transcripts gives researchers a starting codebook to test, linked to the SLB dimensions.",
+ prompt:"Using /FGD_Transcripts_ANON_SAMPLE.docx, identify the main themes across the three groups. For each: a definition, which groups raised it, the linked SLB dimension from /SLB_Concept_Note_SAMPLE.docx, and one short supporting excerpt with its group and participant code. Don't infer anyone's identity, community or location.",
+ chips:["Reading 3 anonymised transcripts","Clustering statements into themes","Linking themes to D1–D8"],
+ reply:[["table",[["Theme","Groups","Dim."],["Economy is the lens for reconciliation","03 · 07 · 11","D5"],["Trust people, not institutions","03 · 07 · 11","D2/D3"],["Language as a barrier","03 · 07","D4"],["Misinformation fuels division","03 · 11","D7"],["Truth about the past first","07","D1"]]],["warn","First pass only. Validate codes and run an inter-coder check."]],
+ canvas:''},
+{id:"res-survey",title:"Survey trends across rounds",one:"Changes in percentage points, with margins of error and a chart.",who:"Minuri",app:"Excel",time:"2–4 hrs/analysis",file:"Survey_Aggregated_Tables_SAMPLE.xlsx › National_Trend",
+ why:"Quick trend reading on aggregated tables, without touching microdata.",
+ prompt:"Using the National_Trend table, compare indicators across Rounds 1–3. Show changes in percentage points from Round 1 to Round 3, flag changes within the margin of error, and chart the four indicators that changed most.",
+ chips:["Reading table tblNational (27 rows)","Calculating changes","Drawing line chart"],
+ reply:[["ul",["**Trust in Parliament** 34% → 19% → 23% (−11 pp).","**Economic fairness** 31% → 22% → 25% (−6 pp).","**Optimism** 58% → 47% → 52% (−6 pp).","**Cross-community friend** is the only one above Round 1: 42% → 46%."]],["warn","Fictional figures. For significance tests, see the Clarity lab."]],
+ canvas:'<div class="chart">'+trendChart()+'</div>'},
+{id:"res-brief",title:"Report → policy brief",one:"A 2-page brief for officials with figures marked for checking.",who:"Minuri",app:"Word",time:"2–4 hrs/brief",file:"SLB_Concept_Note_SAMPLE.docx + survey tables",
+ why:"Turns long research into a brief officials will read.",
+ prompt:"Turn /SLB_Concept_Note_SAMPLE.docx and the national trends in /Survey_Aggregated_Tables_SAMPLE.xlsx into a 2-page policy brief for government officials: key finding, why it matters, 3 recommendations, one chart suggestion. Use only figures from the sources and mark each [CHECK].",
+ chips:["Reading concept note D2","Reading national trend table","Drafting brief"],
+ reply:[["p","Drafted a **2-page brief** with 3 recommendations and a chart suggestion. Figures marked [CHECK]."]],
+ canvas:'<div class="doc"><h4 class="rv">Rebuilding trust when budgets are tight</h4><p class="rv"><b>Key finding.</b> Trust across communities dipped in the crisis (48% → 44%) and partly recovered (47%) <span class="chk">[CHECK]</span>. Contact is growing; institutional trust lags.</p><p class="rv"><b>Why it matters.</b> When opportunities feel unfairly shared, trust falls with it.</p><ul class="clean"><li class="rv">Publish how relief budgets are shared across districts.</li><li class="rv">Fund mixed youth programmes.</li><li class="rv">Serve the public in Sinhala and Tamil at every counter.</li></ul></div>'},
+{id:"res-media",title:"Media pack + Sinhala/Tamil",one:"Press release, posts and language drafts for translator review.",who:"Minuri",app:"Word",time:"2–3 hrs/release",file:"Policy brief",
+ why:"One brief becomes a press release, posts and language drafts. A native speaker reviews every translation.",
+ prompt:"From the policy brief, draft: a 300-word press release, 3 LinkedIn posts and 3 X posts. Then draft Sinhala and Tamil versions of the press release headline and first paragraph, marked DRAFT FOR TRANSLATOR REVIEW.",
+ chips:["Reading policy brief","Drafting release and posts","Drafting Sinhala and Tamil"],
+ reply:[["p","Done: press release, 6 posts and Sinhala/Tamil drafts, all marked for review."]],
+ canvas:'<div class="doc"><h4 class="rv">Press release</h4><p class="rv"><b>Trust across communities is recovering, but institutions are not keeping up</b></p><h4 class="rv">සිංහල (draft)</h4><p class="rv">ප්‍රජාවන් අතර විශ්වාසය යළි ගොඩනැගෙමින් පවතී <span class="chk">DRAFT FOR TRANSLATOR REVIEW</span></p><h4 class="rv">தமிழ் (draft)</h4><p class="rv">சமூகங்களுக்கிடையிலான நம்பிக்கை மீண்டும் வளர்கிறது <span class="chk">DRAFT FOR TRANSLATOR REVIEW</span></p></div>'}
+]};
+
+/* ---------------------------------------------------------------- Clarity lab */
+var LENS={
+ "Dr. Natasha Palansuriya":"PhD International Politics; peace and conflict, transitional justice, diaspora, governance",
+ "Prof. Rajen Govender":"Advisor; reconciliation barometer and Afrobarometer survey methods",
+ "Minuri Perera":"MSc Climate Change & Global Development; mixed-methods research",
+ "Saranie Wijesinghe":"Economics; regional development and planning; policy research",
+ "Dr. Mohamed Munas":"Board; senior researcher on poverty and development",
+ "Radhika Hettiarachchi":"Advisor; peacebuilding, oral history and memorialisation",
+ "Dr. Mario Gomez":"Board; public law, rights and institutions",
+ "Prof. Kalinga Tudor Silva":"Advisor; sociology and anthropology of Sri Lankan communities"};
+var RULES_T="\n\nRULES\n- Cite every factual claim with a link or full reference. Never invent a source; write \"no evidence found\" where that is the case.\n- Separate what the evidence says from your interpretation, and flag contested findings as contested.\n- Use neutral, non-partisan language.\n- Use only published or aggregated data. Never request or include information that could identify a survey respondent or interviewee.";
+var CL={t:[
+{id:"t1",title:"How barometers measure reconciliation",one:"Comparative methods review to sharpen SLB Round 4.",lens:["Dr. Natasha Palansuriya","Prof. Rajen Govender","Minuri Perera"],time:"2–3 days of desk research",sim:true,
+ why:["Brings three lenses into one run: political theory, survey methodology and mixed methods.","Forces an Adopt / Adapt / Avoid decision list, not just a literature summary.","Grades evidence so weak claims don't drive questionnaire changes."],
+ prompt:"ROLE AND LENS\nAct as a senior research team combining: (1) a peace-and-conflict scholar with a PhD in international politics and 10+ years on transitional justice, diaspora and governance; (2) a survey methodologist who has run a national reconciliation barometer and multi-country public opinion surveys; (3) a mixed-methods researcher.\n\nRESEARCH QUESTION\nHow do national reconciliation barometers and comparable post-conflict surveys define and measure reconciliation, what have they learned about validity, change over time and policy uptake, and what should the Sri Lanka Barometer adopt, adapt or avoid in its next round?\n\nSCOPE\n- Instruments: the South African Reconciliation Barometer, Afrobarometer, Northern Ireland Life and Times, and comparable surveys in post-conflict settings (for example the Western Balkans, Colombia, Rwanda). Add others you find.\n- Period: 2010 onward; earlier only for foundational work.\n- Sources: peer-reviewed journals, technical and methodology reports; label grey literature.\n- Our framing: use /SLB_Concept_Note_SAMPLE.docx and our SLB SharePoint for how we define the 8 dimensions.\n\nANALYSE\n1. Conceptual frameworks: how reconciliation is defined and broken into dimensions; compare with our 8.\n2. Measurement: question wording, scales, translation and cognitive testing, measurement invariance across languages and groups, social desirability and interviewer-identity effects.\n3. Design: sampling in conflict-affected areas, panel vs repeated cross-section, mode, frequency.\n4. Change over time: how trends are reported, significance testing, limits on attribution.\n5. Uptake: evidence of policy and media use, and what made findings travel.\n6. Ethics: protecting respondents in sensitive surveys.\n\nOUTPUT\n- Executive summary for the Executive Director (max 300 words).\n- Comparison table: Instrument | Dimensions | Design | Notable lessons | Sources.\n- Adopt / Adapt / Avoid recommendations for SLB Round 4, each linked to evidence.\n- Research gaps Sri Lanka is well placed to fill.\n- Reference list with links. Grade each key claim Strong / Moderate / Limited evidence."+RULES_T},
+{id:"t2",title:"Economic crisis and social cohesion",one:"Mechanism map plus testable hypotheses for the Analyst.",lens:["Saranie Wijesinghe","Dr. Mohamed Munas","Dr. Natasha Palansuriya"],time:"2–3 days of desk research",
+ why:["Turns theory into hypotheses the Analyst agent can test on our tables.","Adds a distributional lens: who is hit hardest, and does that shape attitudes?","Separates what surveys can test from what needs qualitative work."],
+ prompt:"ROLE AND LENS\nAct as a research team combining: a development economist specialising in regional development and planning; a senior researcher on poverty, labour and social protection in Sri Lanka; and a political scientist working on peace and conflict.\n\nRESEARCH QUESTION\nThrough which mechanisms do economic crises and prolonged hardship affect inter-group trust, institutional trust and support for reconciliation, and which of these mechanisms can the Sri Lanka Barometer test with its existing indicators?\n\nSCOPE\n- Theories: relative deprivation, group threat and scapegoating, intergroup contact under scarcity, procedural fairness and institutional trust, social protection and the social contract.\n- Evidence: Sri Lanka's 2022 economic crisis and aftermath, comparable crises elsewhere, and multi-country survey studies.\n- Our files: /SLB_Concept_Note_SAMPLE.docx and published SLB tables for indicator wording (D2, D3, D5, D8).\n- Period: 2008 onward; older foundational theory where needed.\n\nANALYSE\n1. Mechanism map: shock → pathway → attitude, with evidence strength for each link.\n2. Conditions that amplify or dampen effects: social protection, perceived fairness of distribution, elite rhetoric, misinformation, regional inequality.\n3. Distribution: who is hit hardest (region, age, gender) and how that relates to attitudes.\n4. Testability: which links repeated cross-sections can test, and which need panel or qualitative data.\n\nOUTPUT\n- Executive summary (300 words).\n- Mechanism table: Pathway | Expected effect | Evidence strength | Key sources.\n- 5–7 testable hypotheses mapped to SLB indicators and subgroups, written so the Analyst agent can test them on aggregated tables.\n- Questions for our next focus-group round.\n- Graded reference list with links."+RULES_T},
+{id:"t3",title:"Truth, memory and transitional justice",one:"Public attitudes to truth-seeking, and how D1 should capture them.",lens:["Dr. Natasha Palansuriya","Radhika Hettiarachchi","Dr. Mario Gomez","Prof. Kalinga Tudor Silva"],time:"3–4 days of desk research",
+ why:["Combines legal, sociological and oral-history perspectives on a sensitive topic.","Produces draft question wording checked for leading language.","Includes a do-no-harm qualitative design, not just findings."],
+ prompt:"ROLE AND LENS\nAct as a team combining: a transitional-justice and diaspora scholar; an oral-history and memorialisation practitioner; a public-law expert on rights and institutions; and a sociologist of Sri Lankan communities.\n\nRESEARCH QUESTION\nWhat does research show about how publics in post-war societies, including diasporas, view truth-seeking, memorialisation, reparations and accountability, and how should the SLB's 'acknowledging the past' dimension (D1) and its follow-up research capture this in Sri Lanka?\n\nSCOPE\n- Sri Lanka's official commissions and mechanisms since 2009 and public responses to them.\n- Comparative cases such as South Africa, Colombia, Northern Ireland, Bosnia and Herzegovina, Nepal.\n- Diaspora attitudes and their influence.\n- Oral history and memory work as research methods.\n- Our files: the D1 concept note and current interview guides.\n\nANALYSE\n1. Patterns of support for each mechanism, and differences across communities, generations and diaspora.\n2. What builds or erodes trust in these mechanisms: independence, victim participation, legal follow-through.\n3. Methods: survey wording pitfalls on sensitive past events; how oral history complements surveys; ethics and do-no-harm.\n4. The legal and institutional context in Sri Lanka needed to interpret attitudes.\n\nOUTPUT\n- Executive summary (300 words).\n- Comparative table: Case | Mechanism | Public attitude findings | Method | Source.\n- Recommended D1 indicator refinements, with draft neutral question wording.\n- A follow-up qualitative design: sampling logic, interview themes, safeguarding and referral steps.\n- Graded reference list."+RULES_T},
+{id:"t4",title:"Climate stress and social cohesion",one:"Evidence and a draft climate-justice module for the SLB.",lens:["Minuri Perera","Prof. Kalinga Tudor Silva","Saranie Wijesinghe"],time:"2–3 days of desk research",
+ why:["Builds a bridge between the Climate Justice research area and the SLB.","Proposes indicators without breaking comparability with past rounds.","Points to public climate data that can be linked at district level."],
+ prompt:"ROLE AND LENS\nAct as a team combining: a climate-and-development researcher with mixed-methods expertise; a rural sociologist; and a regional development planner.\n\nRESEARCH QUESTION\nHow do climate stresses (drought, floods, water scarcity, crop failure) affect relations between communities and trust in local institutions in Sri Lanka, and how could Insights add a climate-justice module to the SLB without losing comparability with earlier rounds?\n\nSCOPE\n- Sri Lankan dry-zone and coastal evidence; South Asian and global studies on climate, resource competition and cooperation or conflict.\n- Government and donor adaptation programmes and their social effects.\n- Public climate and hazard datasets that could be linked at district level (aggregated only).\n- Period: 2010 onward.\n\nANALYSE\n1. Evidence on climate stress leading to cooperation versus competition, and the conditions for each.\n2. How climate risk is distributed across regions and communities.\n3. Where local institutions mediate outcomes.\n4. A climate module: 4–6 candidate indicators, links to existing dimensions, sampling implications, and data partners.\n\nOUTPUT\n- Executive summary (300 words).\n- Evidence table with graded claims.\n- Draft climate module: indicator | rationale | link to D1–D8 | risks.\n- A mixed-methods follow-up design.\n- Graded reference list."+RULES_T}
+],m:[
+{id:"m1",title:"Is the change real?",one:"Significance tests and CIs for every indicator across rounds.",lens:["Prof. Rajen Govender","Minuri Perera"],time:"1–2 days of analysis",sim:true,
+ why:["Stops the team over-reading small changes in public statements.","Uses the design effect, so confidence intervals are honest.","The forest chart is ready for a report or a board slide."],
+ prompt:"GOAL\nTell me which changes in the Sri Lanka Barometer national indicators are statistically meaningful.\n\nDATA\n/Survey_Aggregated_Tables_SAMPLE.xlsx, sheet National_Trend: weighted % agree and unweighted n, by indicator and round. Assume a design effect of 1.3.\n\nANALYSIS (use Python and show your code)\n1. For each indicator, compute the change in percentage points from Round 1 to Round 3 and from Round 2 to Round 3.\n2. Using effective sample size n / 1.3, run a two-proportion test: 95% confidence interval for each change and a z-score.\n3. Label each change Significant (|z| ≥ 1.96) or Within noise.\n4. Draw a forest chart of Round 1 → Round 3 changes with 95% CIs, sorted by size.\n\nOUTPUT\n- Results table: Indicator | R1 | R2 | R3 | Δ R1→R3 | 95% CI | Significant?\n- The forest chart.\n- 5 plain-English findings a policymaker would understand.\n- Assumptions and limitations: aggregated data, assumed design effect, multiple comparisons."},
+{id:"m2",title:"Who is left behind?",one:"Subgroup gaps, whether they're closing, and a province heatmap.",lens:["Saranie Wijesinghe","Minuri Perera"],time:"1–2 days of analysis",sim:true,
+ why:["Shows persistent gaps, which are where policy attention matters.","Tests whether gaps changed, not just whether they exist.","Keeps community groups as anonymised codes."],
+ prompt:"GOAL\nFind the largest and most persistent gaps between groups in the Sri Lanka Barometer.\n\nDATA\n/Survey_Aggregated_Tables_SAMPLE.xlsx, sheets By_Age_Gender, By_Province and By_Community. Design effect 1.3.\n\nANALYSIS (Python, show code)\n1. For each indicator and round compute gaps: age 18–29 minus 60+; women minus men; highest minus lowest province; Community A minus each other community.\n2. Test whether each gap changed between Round 1 and Round 3 (difference in differences of proportions, effective n, 95% CI).\n3. Heatmap: provinces × indicators for Round 3, centred on the national value.\n4. Identify the 5 gaps that are both largest and persistent.\n\nOUTPUT\n- Ranked table of gaps with CIs.\n- Heatmap.\n- 5 findings in plain English.\n- Caveats: small subgroup samples, wide margins, community labels are anonymised codes."},
+{id:"m3",title:"One number for reconciliation?",one:"Build and stress-test a composite index by province.",lens:["Prof. Rajen Govender","Dr. Natasha Palansuriya"],time:"2 days of analysis",
+ why:["Tests whether an index helps communication before anyone publishes one.","Shows how much rankings depend on weighting choices.","Flags the ecological fallacy up front."],
+ prompt:"GOAL\nBuild an illustrative composite reconciliation index by province and round, and show how sensitive the ranking is to method choices.\n\nDATA\n/Survey_Aggregated_Tables_SAMPLE.xlsx, sheet By_Province.\n\nANALYSIS (Python, show code)\n1. Normalise each indicator to 0–100 (min–max across all province-rounds).\n2. Index A: equal weights across the 9 indicators. Index B: equal weights per dimension (D3 has two indicators). Index C: weights from the first principal component.\n3. Rank provinces under each index and show rank changes.\n4. Stability: perturb weights by ±10% (1,000 draws) and report how often each province's rank changes.\n5. Plot index trends by province across rounds.\n\nOUTPUT\n- Index table and ranking comparison.\n- Stability chart.\n- A recommendation: does an index help communication, and if so which version?\n- Caveats: ecological fallacy, aggregated data, PCA on 27 observations."},
+{id:"m4",title:"Triangulate the evidence",one:"Test Researcher hypotheses against survey and focus-group data.",lens:["Dr. Natasha Palansuriya","Minuri Perera","Radhika Hettiarachchi"],time:"2–3 days of analysis",
+ why:["Connects telescopic and microscopic work in one evidence matrix.","Puts qualitative and quantitative evidence side by side.","Is honest about what aggregated data can't show."],
+ prompt:"GOAL\nBring the literature, our survey tables and our focus-group themes into one evidence matrix.\n\nDATA\n- Hypotheses from the Researcher report (pasted below).\n- /Survey_Aggregated_Tables_SAMPLE.xlsx (all sheets).\n- The theme table from our coding of /FGD_Transcripts_ANON_SAMPLE.docx.\n\nANALYSIS (Python where useful, show code)\n1. For each hypothesis, identify the SLB indicators and subgroups that can test it.\n2. Run the test on aggregated data: direction, size, 95% CI (design effect 1.3).\n3. Add qualitative evidence: themes and excerpt IDs only, never names.\n4. Rate overall support: Supported / Mixed / Not supported / Can't test with this data.\n\nOUTPUT\n- Evidence matrix: Hypothesis | Quantitative result | Qualitative evidence | Verdict | Confidence.\n- 3 charts that best show the verdicts.\n- A one-page summary for the research team.\n- An explicit list of what aggregated data cannot show.\n\nHYPOTHESES\n[PASTE THE HYPOTHESES FROM THE RESEARCHER REPORT HERE]"}
+]};
+var CLSIM={
+ t1:{app:"Researcher",file:"Web + your SharePoint (SLB concept notes)",chips:["Planning: 6 sub-questions","Searching the web and your SharePoint","Reading sources and concept notes","Grading evidence","Writing cited report"],
+  reply:[["p","Your report is ready: **executive summary, comparison table, Adopt / Adapt / Avoid list and graded references**."],["warn","Simulation shows the report structure only. The real Researcher report contains live citations; verify each one."]],
+  canvas:'<div class="doc"><h4 class="rv">Executive summary</h4><p class="rv muted">300 words for the Executive Director, with citations [1]–[n].</p><h4 class="rv">Comparison of instruments</h4><table class="sheet rv"><thead><tr><th>Instrument</th><th>Dimensions</th><th>Design</th><th>Lessons</th></tr></thead><tbody><tr><td>South African Reconciliation Barometer</td><td>[cited]</td><td>[cited]</td><td>[cited]</td></tr><tr><td>Afrobarometer</td><td>[cited]</td><td>[cited]</td><td>[cited]</td></tr><tr><td>Northern Ireland Life and Times</td><td>[cited]</td><td>[cited]</td><td>[cited]</td></tr><tr><td>Sri Lanka Barometer (ours)</td><td>8 dimensions</td><td>Every 2 years</td><td>–</td></tr></tbody></table><h4 class="rv">Adopt · Adapt · Avoid for Round 4</h4><ul class="clean"><li class="rv">✅ <b>Adopt:</b> cognitive testing in all three languages each round</li><li class="rv">🔁 <b>Adapt:</b> a stable core trend module plus a rotating thematic module</li><li class="rv">⛔ <b>Avoid:</b> reporting subgroup changes without margins of error</li></ul><p class="rv cell-note">Each recommendation links to graded evidence in the report.</p></div>'},
+ m1:{app:"Analyst",file:"Survey_Aggregated_Tables_SAMPLE.xlsx › National_Trend",chips:["Loading National_Trend (27 rows)","Writing Python: two-proportion tests, deff 1.3","Running code","Drawing forest chart"],
+  reply:[["p","**8 of 9 indicators changed significantly** from Round 1 to Round 3. Only trust in other communities (−1 pp) is within noise."],["ul",["Biggest fall: **trust in Parliament, −11 pp** (95% CI ±2.3).","Rising: **knowing the truth about the past +5 pp**, **cross-community friendship +4 pp**.","Round 2 → 3: 7 of 9 recovered significantly; truth (+2) and free expression (+2) are within noise."]],["warn","Fictional data. Assumed design effect 1.3; 18 tests run, so treat borderline results with care."]],
+  canvas:'<div class="code rv">import pandas as pd, numpy as np\ndf = pd.read_excel("Survey_Aggregated_Tables_SAMPLE.xlsx", "National_Trend")\nDEFF = 1.3\ndef change(p1, n1, p2, n2):\n    p1, p2 = p1/100, p2/100\n    se = np.sqrt(p1*(1-p1)/(n1/DEFF) + p2*(1-p2)/(n2/DEFF))\n    return (p2-p1)*100, 1.96*se*100, (p2-p1)/se</div><div class="chart rv" style="margin-top:10px">'+forestChart()+'</div><p class="cell-note">Change Round 1 → Round 3, percentage points, 95% CI. Coral = significant fall, green = significant rise, grey = within noise.</p>'},
+ m2:{app:"Analyst",file:"Survey_Aggregated_Tables_SAMPLE.xlsx › By_Age_Gender",chips:["Loading By_Age_Gender, By_Province, By_Community","Computing gaps per round","Difference-in-differences with CIs","Drawing heatmap"],
+  reply:[["p","**Most persistent gaps (Round 1 → Round 3):**"],["ul",["**Women vs men, free to express views:** −10 pp → −11 pp. Persistent; no sign of closing.","**Youth vs 60+, cross-community friend:** +12 pp → +14 pp. Young people lead.","**Youth vs 60+, optimism:** +11 pp → +9 pp.","**Youth vs 60+, trust in police:** −6 pp → −5 pp. Young people trust less."]],["warn","Subgroup margins are ±3–4 pp, so changes in these gaps are not significant: the gaps are stable, not widening."]],
+  canvas:'<table class="sheet"><thead><tr><th>Gap</th><th>Indicator</th><th class="num">R1</th><th class="num">R3</th><th>Trend</th></tr></thead><tbody><tr class="rv flag"><td>Women − men</td><td>Free to express views</td><td class="num">−10</td><td class="num">−11</td><td>Persistent</td></tr><tr class="rv under"><td>18–29 − 60+</td><td>Cross-community friend</td><td class="num">+12</td><td class="num">+14</td><td>Stable</td></tr><tr class="rv under"><td>18–29 − 60+</td><td>Optimism</td><td class="num">+11</td><td class="num">+9</td><td>Stable</td></tr><tr class="rv flag"><td>18–29 − 60+</td><td>Trust the police</td><td class="num">−6</td><td class="num">−5</td><td>Stable</td></tr><tr class="rv"><td>18–29 − 60+</td><td>Trust Parliament</td><td class="num">−5</td><td class="num">−3</td><td>Stable</td></tr></tbody></table><p class="cell-note" style="margin-top:6px">Percentage points · fictional data</p>'}
+};
+
+/* ---------------------------------------------------------------- agents (from build guides) */
+var AGSIM={
+ "grant-compliance":{q:"What do we need for tranche 3, and what else is due with the interim report?",chips:["Searching grant agreements","Searching reporting calendar"],reply:[["p","**Tranche 3 (20%)** follows acceptance of the interim report (cl. 3.1), due **1 March 2027** (cl. 4.2)."],["ul",["At least **70% of tranches 1–2** spent first (cl. 3.2). Finance to confirm.","**Expenditure verification** with the financial report (cl. 8.2).","Explain variances above 10% per line (cl. 4.4)."]],["warn","Guidance only. Finance makes the final decision."]]},
+ "slb-knowledge":{q:"What do we know about trust across communities among young people?",chips:["Searching concept notes","Searching published tables"],reply:[["p","Young people report **more cross-community friendships** than older groups, but **lower trust in institutions**."],["p","Trust across communities overall: 48% (2021) → 44% (2023) → 47% (2025)."],["warn","Sources: Concept Note D2 §4 and §6; By_Age_Gender table. Illustrative figures."]]},
+ "proposal-builder":{q:"Draft the 'Organisational capacity' section for the Social Cohesion Evidence Fund. Max 250 words.",chips:["Searching capacity statement","Searching results bank","Checking call requirements"],reply:[["p","**Draft:** The Insights Initiative is the permanent home of the Sri Lanka Barometer, a nationally representative survey of attitudes to reconciliation, with free data releases, follow-up research and trilingual outreach… <span class='chk'>[ADD EVIDENCE: rounds, downloads, citations]</span>"],["warn","The call needs 3 years of legal existence. Check eligibility first."]]},
+ "ask-barometer":{q:"Has trust in Parliament changed since 2021? Which district was least trusting?",chips:["Searching published Round 1–3 tables"],reply:[["p","Published results: **34% (2021), 19% (2023), 23% (2025)**: a big drop in the crisis and a partial recovery."],["p","District-level results aren't published, so I can't answer the second part. Province tables are in the Round 3 report."],["warn","Answers come from published SLB reports. Check the cited source before quoting."]]},
+ "month-end":{q:"Run the month-end checks on this ledger export.",chips:["Loading Ledger_2026 export","Running 5 checks in Python"],reply:[["table",[["Check","Result"],["Duplicates","1 pair: PV-0005 / PV-0009"],["Missing receipts","3 payments"],["Wrong grant","PV-0134 (G2 → G3?)"],["Allocation ≠ 100%","Bank charges (95%)"],["Lines >10% off","16 of 28"]]],["warn","Flags to check, not conclusions."]]},
+ "copilot-coach":{q:"Improve this prompt: 'summarise partner emails'",chips:["Checking AI use policy","Matching prompt library"],reply:[["p","Try this:"],["p","<code>Goal: Give me a status update on our outreach partner. Context: … Source: my emails and Teams from the last 14 days with the partner. Expectations: 5 bullets: progress, open requests, risks, next meeting, actions for me.</code>"],["p","🧭 4C habit: **Clarity (telescopic)**. Run it every Friday."]]}
+};
+
+/* ---------------------------------------------------------------- builders */
+function blockHTML(b){
+  if(b[0]==='p')return '<p>'+fmt(b[1])+'</p>';
+  if(b[0]==='warn')return '<p class="warn">'+fmt(b[1])+'</p>';
+  if(b[0]==='ul')return '<ul>'+b[1].map(function(x){return '<li>'+fmt(x)+'</li>';}).join('')+'</ul>';
+  if(b[0]==='table'){var r=b[1];return '<div style="overflow-x:auto"><table><thead><tr>'+r[0].map(function(c){return '<th>'+c+'</th>';}).join('')+'</tr></thead><tbody>'+r.slice(1).map(function(x){return '<tr>'+x.map(function(c){return '<td>'+fmt(c)+'</td>';}).join('')+'</tr>';}).join('')+'</tbody></table></div>';}
+  return '';
+}
+function finalPane(s){return '<div class="bub-u">'+esc(s.prompt)+'</div><div class="chips">'+s.chips.map(function(c){return '<div class="chip done"><span class="ck"></span>'+c+'</div>';}).join('')+'</div><div class="reply">'+s.reply.map(blockHTML).join('')+'</div>';}
+var SIMS={};
+function simHTML(s){
+  SIMS[s.id]=s;var chat=!s.canvas;
+  return '<div class="sim'+(chat?' chatonly':'')+'" data-sim="'+s.id+'"><div class="sim-top"><span class="dots"><i></i><i></i><i></i></span><span class="appb app-'+s.app+'">'+APPNAME[s.app]+'</span><span class="sim-file">'+esc(s.file)+'</span><button class="sim-play" type="button">'+PLAY+'<span>Play simulation</span></button></div><div class="sim-prog"><i></i></div><div class="sim-body">'+(chat?'':'<div class="canvas">'+s.canvas+'</div>')+'<div class="pane"><div class="pane-h">'+SPARK+(s.paneTitle||'Copilot')+'</div><div class="msgs" aria-live="polite">'+finalPane(s)+'</div><div class="inputbar">Ask Copilot…</div></div></div><div class="sim-cap">Simulation with fictional sample data. Live results will differ in wording.</div></div>';
+}
+function promptBox(id,text,label){return '<div class="box"><div class="prompt-bar"><h4>'+(label||'📋 Prompt')+'</h4><button class="btn" type="button" data-copy="'+id+'">Copy</button></div><div class="prompt" id="p-'+id+'">'+esc(text)+'</div></div>';}
+var PROMPTS={};
+
+function ucCard(u){
+  PROMPTS[u.id]=u.prompt;
+  return '<article class="ucc" id="'+u.id+'"><div class="ucc-top"><span class="ico">'+APPICON[u.app]+'</span><div style="display:flex;flex-direction:column;gap:4px;min-width:0"><h3>'+u.title+'</h3><p>'+u.one+'</p></div></div><div class="tags"><span class="tag">'+u.who+'</span><span class="tag">'+APPNAME[u.app]+'</span><span class="tag coral">⏱ '+u.time+'</span></div><div class="actions"><button class="btn primary" type="button" data-open="uc:'+u.id+'">▶ Watch &amp; prompt</button><button class="btn" type="button" data-copyraw="'+u.id+'">📋 Copy prompt</button></div></article>';
+}
+var UCBY={};
+Object.keys(UC).forEach(function(k){document.getElementById('uc-'+k).innerHTML=UC[k].map(ucCard).join('');UC[k].forEach(function(u){UCBY[u.id]=u;});});
+
+function clCard(c,mode){
+  PROMPTS[c.id]=c.prompt;
+  return '<article class="ucc"><div class="ucc-top"><span class="ico">'+(mode==='t'?'🔭':'🔬')+'</span><div style="display:flex;flex-direction:column;gap:4px;min-width:0"><h3>'+c.title+'</h3><p>'+c.one+'</p></div></div><div class="lens">'+c.lens.map(function(l){return '<span class="tag tip" tabindex="0" data-tip="'+esc(LENS[l])+'">🧠 '+l+'</span>';}).join('')+'</div><div class="tags"><span class="tag coral">⏱ saves '+c.time+' (estimate)</span>'+(c.sim?'<span class="tag good">▶ simulation</span>':'')+'</div><div class="actions"><button class="btn primary" type="button" data-open="cl:'+c.id+'">Open prompt</button><button class="btn" type="button" data-copyraw="'+c.id+'">📋 Copy</button></div></article>';
+}
+var CLBY={};
+document.getElementById('lane-t').innerHTML=CL.t.map(function(c){CLBY[c.id]=c;c.mode='t';return clCard(c,'t');}).join('');
+document.getElementById('lane-m').innerHTML=CL.m.map(function(c){CLBY[c.id]=c;c.mode='m';return clCard(c,'m');}).join('');
+
+/* agents */
+var AGBY={};AGENT_DATA.agents.forEach(function(a){AGBY[a.id]=a;PROMPTS['ag-'+a.id]=a.instructions;});
+var agtabs=document.getElementById('agtabs'),aggrid=document.getElementById('aggrid');
+agtabs.innerHTML='<button class="fbtn" type="button" data-seg="all" aria-pressed="true">All 17</button>'+AGENT_DATA.segments.map(function(s){var n=AGENT_DATA.agents.filter(function(a){return a.seg===s.key;}).length;return '<button class="fbtn" type="button" data-seg="'+s.key+'" aria-pressed="false">'+s.emoji+' '+s.title+' · '+n+'</button>';}).join('');
+function agCard(a){
+  return '<article class="ucc" data-seg="'+a.seg+'"><div class="ucc-top"><span class="ico">'+a.emoji+'</span><div style="display:flex;flex-direction:column;gap:4px;min-width:0"><h3>'+a.name+'</h3><p>'+a.one+'</p></div></div><div class="tags"><span class="toolb'+(a.tool.indexOf('full')>-1?' full':'')+'">'+a.tool+'</span><span class="tag">👤 '+a.owner+'</span></div><div class="actions"><button class="btn primary" type="button" data-open="ag:'+a.id+'">🛠 How to build</button>'+(AGSIM[a.id]?'<button class="btn" type="button" data-open="agsim:'+a.id+'">▶ Watch it</button>':'')+'</div></article>';
+}
+aggrid.innerHTML=AGENT_DATA.agents.map(agCard).join('');
+agtabs.addEventListener('click',function(e){var b=e.target.closest('[data-seg]');if(!b)return;var s=b.getAttribute('data-seg');
+  [].forEach.call(agtabs.children,function(x){x.setAttribute('aria-pressed',x===b?'true':'false');});
+  [].forEach.call(aggrid.children,function(c){c.hidden=!(s==='all'||c.getAttribute('data-seg')===s);});});
+
+/* ---------------------------------------------------------------- read-more content */
+var MORE={
+ files:{t:"📥 Download single files",h:'<div class="tbl-wrap"><table><thead><tr><th></th><th>File</th><th>Area</th><th class="num">Size</th><th></th></tr></thead><tbody><tr><td>📊</td><td><b>Sample_Grant_Budget_ANON.xlsx</b><br><span class="muted small">Budget vs actual, ledger, shared costs, cash flow</span></td><td>Finance</td><td class="num">29 KB</td><td><a class="btn" href="https://sahantrident.github.io/insights-copilot-playbook/downloads/Sample_Grant_Budget_ANON.xlsx" download>⬇️ Download</a></td></tr><tr><td>📝</td><td><b>Donor_Report_Template_SAMPLE.docx</b><br><span class="muted small">Donor report headings and tables</span></td><td>Finance</td><td class="num">39 KB</td><td><a class="btn" href="https://sahantrident.github.io/insights-copilot-playbook/downloads/Donor_Report_Template_SAMPLE.docx" download>⬇️ Download</a></td></tr><tr><td>📜</td><td><b>Grant_Agreement_Extract_SAMPLE.docx</b><br><span class="muted small">Donor rules for the Grant Compliance demo</span></td><td>Finance</td><td class="num">39 KB</td><td><a class="btn" href="https://sahantrident.github.io/insights-copilot-playbook/downloads/Grant_Agreement_Extract_SAMPLE.docx" download>⬇️ Download</a></td></tr><tr><td>🏛️</td><td><b>Board_Update_Notes_SAMPLE.docx</b><br><span class="muted small">Notes for the board deck demo</span></td><td>Leadership</td><td class="num">39 KB</td><td><a class="btn" href="https://sahantrident.github.io/insights-copilot-playbook/downloads/Board_Update_Notes_SAMPLE.docx" download>⬇️ Download</a></td></tr><tr><td>📣</td><td><b>Call_for_Proposals_SAMPLE.docx</b><br><span class="muted small">A fictional funding call</span></td><td>Leadership</td><td class="num">38 KB</td><td><a class="btn" href="https://sahantrident.github.io/insights-copilot-playbook/downloads/Call_for_Proposals_SAMPLE.docx" download>⬇️ Download</a></td></tr><tr><td>📚</td><td><b>SLB_Concept_Note_SAMPLE.docx</b><br><span class="muted small">Concept note for one dimension</span></td><td>Research</td><td class="num">38 KB</td><td><a class="btn" href="https://sahantrident.github.io/insights-copilot-playbook/downloads/SLB_Concept_Note_SAMPLE.docx" download>⬇️ Download</a></td></tr><tr><td>🗣️</td><td><b>FGD_Transcripts_ANON_SAMPLE.docx</b><br><span class="muted small">3 anonymised focus-group transcripts</span></td><td>Research</td><td class="num">39 KB</td><td><a class="btn" href="https://sahantrident.github.io/insights-copilot-playbook/downloads/FGD_Transcripts_ANON_SAMPLE.docx" download>⬇️ Download</a></td></tr><tr><td>📈</td><td><b>Survey_Aggregated_Tables_SAMPLE.xlsx</b><br><span class="muted small">Aggregated results across 3 rounds</span></td><td>Research</td><td class="num">33 KB</td><td><a class="btn" href="https://sahantrident.github.io/insights-copilot-playbook/downloads/Survey_Aggregated_Tables_SAMPLE.xlsx" download>⬇️ Download</a></td></tr><tr><td>📄</td><td><b>README.txt</b><br><span class="muted small">What each file is for, and what Copilot should find</span></td><td>All</td><td class="num">4 KB</td><td><a class="btn" href="https://sahantrident.github.io/insights-copilot-playbook/downloads/README.txt" download>⬇️ Download</a></td></tr></tbody></table></div><p class="muted small">Upload the files to OneDrive before a demo: Copilot in Excel and Word works on files saved in OneDrive or SharePoint.</p>'},
+ discovery:{t:"🧭 How to run the Discovery prompt",h:'<div class="box"><ol class="clean" style="padding-left:20px"><li>Open <b>Microsoft 365 Copilot Chat</b> and switch to <b>Work</b>.</li><li>Open the .md file, fill in your function, job title and join date at the top of the prompt.</li><li>Paste the whole prompt and send it. It may take a few minutes.</li><li>Copy the HTML code block, paste it into Notepad or TextEdit (plain text) and save as <code>Insights_Copilot_Opportunity_&lt;YourInitials&gt;.html</code>.</li><li>Open the file in a browser. If Copilot stops partway, reply <b>continue the code block</b>.</li><li>Before sharing, check there are no other people\'s names, respondent details, donor or partner names, or amounts.</li></ol></div><div><a class="btn primary" href="https://sahantrident.github.io/insights-copilot-playbook/downloads/Insights_Copilot_Discovery_Prompt.md" download>⬇️ Download the prompt (.md)</a></div>'},
+ vision:{t:"📖 Vision for October 2027",h:'<div class="box"><p style="font-size:17px;line-height:1.6">By October 2027, Insights runs as a small team with the reach of a large one. Every staff member uses Copilot daily and safely. Routine finance and reporting work runs on templates and automations. Sri Lanka Barometer evidence moves from survey to policy brief to public conversation, in three languages, in weeks rather than months. Respondents\' data stays protected throughout.</p></div>'},
+ fromto:{t:"🔄 From → To: all nine shifts",h:'<div class="tbl-wrap"><table><thead><tr><th>From (today) — assumed</th><th>To (October 2027)</th></tr></thead><tbody><tr><td>Catching up on email and Teams by hand</td><td>10-minute Copilot brief each morning</td></tr><tr><td>Donor reports from scratch in each format</td><td>Template + Copilot draft + finance check</td></tr><tr><td>Shared costs split in ad-hoc spreadsheets</td><td>Standard allocation templates, checked monthly</td></tr><tr><td>Grant rules in heads and PDFs</td><td>Grant Compliance agent with clause references</td></tr><tr><td>SLB knowledge across folders and inboxes</td><td>SLB Knowledge agent over approved documents</td></tr><tr><td>Qualitative coding fully by hand</td><td>AI first pass, researcher-validated</td></tr><tr><td>Report → brief → media → languages takes weeks</td><td>Days, with human review at each step</td></tr><tr><td>One main funder</td><td>Proposal engine to diversify funding</td></tr><tr><td>Permissions and data locations unclear</td><td>Labelled, reviewed tenant; respondent data out of reach</td></tr></tbody></table></div>'},
+ licencecompare:{t:"🔍 Licensed seat vs Copilot Chat",h:'<div class="mgrid"><div class="box"><h4>🎟️ Licensed Copilot</h4><ul class="clean"><li>Copilot in Outlook, Teams, Word, Excel, PowerPoint</li><li>Work mode over your own email, chats, meetings and files</li><li>Researcher and Analyst agents, Notebooks <span class="assume">check tenant</span></li><li>Build agents in Copilot Studio Lite</li></ul></div><div class="box"><h4>💬 Copilot Chat (no licence)</h4><ul class="clean"><li>Web-grounded chat under the work account</li><li>Upload a file and work with it</li><li>Use shared agents; some may be billed pay-as-you-go <span class="assume">check</span></li><li>All training and the prompt library</li></ul></div></div><p class="muted small">Feature lists change often. Check Microsoft\'s current documentation and nonprofit offers.</p>'},
+ kpis:{t:"📏 How we measure progress",h:'<div class="tbl-wrap"><table><thead><tr><th>KPI</th><th>Baseline</th><th>Measured</th></tr></thead><tbody><tr><td>⏱ Hours saved per user per week</td><td>Discovery dashboards</td><td>Monthly pulse</td></tr><tr><td>📝 Donor report preparation time</td><td>Last report cycle</td><td>Each report</td></tr><tr><td>📰 Report → brief turnaround</td><td>Last publication</td><td>Each publication</td></tr><tr><td>🏆 Proposal win rate</td><td>Last 12 months</td><td>Quarterly</td></tr><tr><td>👥 Weekly active users</td><td>Usage report</td><td>Monthly</td></tr><tr><td>🛡️ Sensitive data in Copilot reach</td><td>Q1 data map</td><td>Quarterly, target 0</td></tr></tbody></table></div>'},
+ golive:{t:"🚦 Before go-live checklist",h:'<div class="box"><ul class="clean"><li>🗺️ Data map: where respondent data, transcripts, finance and HR files live</li><li>🔍 Over-sharing review: "Anyone" and organisation-wide links, site membership</li><li>🔐 Restricted Research library for raw data; anonymise before analysis</li><li>🏷️ Sensitivity labels published and applied</li><li>🎙️ Teams transcription and recap policy agreed</li><li>📘 AI use policy approved and noted by the Board</li></ul></div>'},
+ policy:{t:"📘 AI use policy outline (1–2 pages)",h:'<div class="box"><ul class="clean"><li>What data may and may not be used with Copilot</li><li>Human review: who checks numbers, translations, external outputs</li><li>Donor rules: check agreements for AI or data clauses</li><li>Disclosure of AI assistance where required</li><li>Research ethics: AI-assisted coding documented in methods</li><li>How to report a mistake or a data concern</li></ul></div>'},
+ review:{t:"🧑‍⚖️ Human review checkpoints",h:'<div class="tbl-wrap"><table><thead><tr><th>Output</th><th>Checked by</th><th>What they check</th></tr></thead><tbody><tr><td>Donor financial reports</td><td>Finance Manager, then ED</td><td>Every figure against the ledger</td></tr><tr><td>Policy briefs and reports</td><td>Research Expert</td><td>Figures against source tables; framing</td></tr><tr><td>Sinhala and Tamil versions</td><td>Native-speaker reviewer</td><td>Meaning, tone, sensitive terms</td></tr><tr><td>Agent answers on compliance</td><td>Finance Manager</td><td>Guidance only, never final</td></tr><tr><td>Public agent answers</td><td>Comms + Research, monthly</td><td>Accuracy, citations, refusals</td></tr></tbody></table></div>'}
+};
+var QMORE={};
+
+/* ---------------------------------------------------------------- modal */
+var modal=document.getElementById('modal'),mt=document.getElementById('modal-title'),mtags=document.getElementById('modal-tags'),mb=document.getElementById('modal-body'),lastFocus=null;
+function openModal(title,tags,body){
+  lastFocus=document.activeElement;mt.innerHTML=title;mtags.innerHTML=tags||'';mb.innerHTML=body;modal.hidden=false;document.body.classList.add('locked');
+  modal.scrollTop=0;document.getElementById('modal-x').focus();
+}
+function closeModal(){Object.keys(tokens).forEach(function(k){tokens[k].dead=true;});modal.hidden=true;mb.innerHTML='';document.body.classList.remove('locked');if(lastFocus)lastFocus.focus();}
+document.getElementById('modal-x').addEventListener('click',closeModal);
+modal.addEventListener('click',function(e){if(e.target===modal)closeModal();});
+document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!modal.hidden)closeModal();});
+
+function openThing(key){
+  var p=key.split(':'),type=p[0],id=p[1];
+  if(type==='uc'){var u=UCBY[id];
+    openModal(APPICON[u.app]+' '+u.title,'<span class="tag">'+u.who+'</span><span class="tag">'+APPNAME[u.app]+'</span><span class="tag coral">⏱ '+u.time+' (estimate)</span>',
+      '<div class="mgrid"><div class="box"><h4>💡 Why it matters</h4><p>'+u.why+'</p><p class="small muted">📁 Demo data: <span style="font-family:var(--f-mono)">'+esc(u.file)+'</span></p></div>'+promptBox(u.id,u.prompt)+'</div>'+simHTML({id:u.id,app:u.app,file:u.file,prompt:u.prompt,chips:u.chips,reply:u.reply,canvas:u.canvas}));
+  }else if(type==='cl'){var c=CLBY[id],s=CLSIM[id];
+    openModal((c.mode==='t'?'🔭 ':'🔬 ')+c.title,'<span class="tag">'+(c.mode==='t'?'Researcher agent · Telescopic':'Analyst agent · Microscopic')+'</span>'+c.lens.map(function(l){return '<span class="tag tip" tabindex="0" data-tip="'+esc(LENS[l])+'">🧠 '+l+'</span>';}).join(''),
+      '<div class="mgrid"><div class="box"><h4>🎯 Why this prompt works</h4><ul class="clean">'+c.why.map(function(w){return '<li>'+w+'</li>';}).join('')+'</ul><h4 style="margin-top:6px">▶ How to run it</h4><p class="small">'+(c.mode==='t'?'Microsoft 365 Copilot → <b>Agents</b> → <b>Researcher</b>. Paste the prompt. Answer its clarifying questions, then let it run (several minutes). Save the report to the SLB SharePoint.':'Microsoft 365 Copilot → <b>Agents</b> → <b>Analyst</b>. Attach the Excel file, paste the prompt. Review the Python code it shows before trusting results.')+'</p></div>'+promptBox(c.id,c.prompt)+'</div>'+(s?simHTML({id:'sim-'+id,app:s.app,file:s.file,prompt:c.prompt,chips:s.chips,reply:s.reply,canvas:s.canvas}):''));
+  }else if(type==='ag'){var a=AGBY[id];
+    openModal(a.emoji+' '+a.name,'<span class="toolb'+(a.tool.indexOf('full')>-1?' full':'')+'">'+a.tool+'</span><span class="tag">👤 '+a.owner+'</span><span class="tag">🔁 Review: '+a.review+'</span>',
+      '<div class="mgrid"><div class="box"><h4>🎬 Scenario</h4><p>'+esc(a.scenario)+'</p><h4 style="margin-top:6px">👥 Users</h4><p class="small">'+esc(a.users)+'</p><h4 style="margin-top:6px">📚 Knowledge</h4><ul class="clean small">'+a.knowledge.map(function(k){return '<li>'+esc(k)+'</li>';}).join('')+'</ul><h4 style="margin-top:6px">⚙️ Settings</h4><ul class="clean small">'+a.caps.map(function(k){return '<li>'+esc(k)+'</li>';}).join('')+'</ul></div>'+promptBox('ag-'+a.id,a.instructions,'🧠 Instructions (paste into Configure)')+'</div>'+
+      '<div class="mgrid"><div class="box"><h4>💬 Starter prompts</h4><ol class="clean small" style="padding-left:20px">'+a.starters.map(function(k){return '<li>'+esc(k)+'</li>';}).join('')+'</ol></div><div class="box"><h4>🧪 Test before sharing</h4><div class="tbl-wrap" style="border:0"><table><thead><tr><th>Ask</th><th>Good behaviour</th></tr></thead><tbody>'+a.tests.map(function(t){return '<tr><td>'+esc(t[0])+'</td><td>'+esc(t[1])+'</td></tr>';}).join('')+'</tbody></table></div></div></div>'+
+      '<div class="box"><h4>🛡️ Guardrails</h4><ul class="clean small">'+a.guard.map(function(k){return '<li>'+esc(k)+'</li>';}).join('')+'</ul><p class="small muted">📦 Full guide in the zip: <span style="font-family:var(--f-mono)">'+esc(a.file)+'</span></p></div>'+(AGSIM[id]?'<div><button class="btn primary" type="button" data-open="agsim:'+id+'">▶ Watch it run</button></div>':''));
+  }else if(type==='agsim'){var g=AGBY[id],m=AGSIM[id];
+    openModal(g.emoji+' '+g.name+' in action','<span class="toolb'+(g.tool.indexOf('full')>-1?' full':'')+'">'+g.tool+'</span>',
+      simHTML({id:'agsim-'+id,app:g.tool.indexOf('full')>-1?'Studio':'Agent',file:'Knowledge: '+g.knowledge[0],prompt:m.q,chips:m.chips,reply:m.reply,canvas:'',paneTitle:g.emoji+' '+g.name})+'<div><button class="btn" type="button" data-open="ag:'+id+'">🛠 How to build it</button></div>');
+  }else if(type==='more'){var x=MORE[id];openModal(x.t,'',x.h);}
+  else if(type==='q'){var q=QMORE[id];openModal(q.t,'',q.h);}
+  else if(type==='habit'){var h=HABY[id];openModal((h[2]?(h[2]==='Telescopic'?'🔭 ':'🔬 '):'')+h[3],'<span class="tag">'+h[0]+'</span><span class="tag">'+h[4]+'</span><span class="tag coral">⏱ '+h[5]+' (estimate)</span>',promptBox(id,h[6]));}
+}
+
+/* ---------------------------------------------------------------- simulation player */
+var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+function wait(ms,tok){return new Promise(function(res,rej){setTimeout(function(){tok.dead?rej('x'):res();},ms);});}
+var tokens={};
+function play(id){
+  var s=SIMS[id],root=document.querySelector('[data-sim="'+id+'"]');if(!root)return;
+  if(tokens[id])tokens[id].dead=true;
+  var tok=tokens[id]={dead:false};
+  var msgs=root.querySelector('.msgs'),input=root.querySelector('.inputbar'),bar=root.querySelector('.sim-prog i'),btn=root.querySelector('.sim-play span');
+  var rvs=[].slice.call(root.querySelectorAll('.canvas .rv'));
+  function done(){msgs.innerHTML=finalPane(s);input.className='inputbar';input.textContent='Ask Copilot…';rvs.forEach(function(e){e.classList.remove('pending');});root.classList.remove('playing');bar.style.width='100%';btn.textContent='Replay';}
+  if(reduce){done();return;}
+  root.classList.add('playing');btn.textContent='Playing…';
+  rvs.forEach(function(e){e.classList.add('pending');});
+  msgs.innerHTML='';bar.style.width='0%';
+  var total=4+s.chips.length+s.reply.length+Math.max(1,rvs.length/3),step=0;
+  function tick(){step++;bar.style.width=Math.min(100,step/total*100)+'%';}
+  (async function(){
+    try{
+      input.className='inputbar typing';
+      var p=s.prompt,n=p.length,dt=Math.max(4,Math.min(18,2600/n)),chunk=Math.max(1,Math.round(n/(2600/dt)));
+      for(var i=0;i<n;i+=chunk){input.innerHTML=esc(p.slice(Math.max(0,i-300),i+chunk))+'<span class="caret"></span>';input.scrollTop=input.scrollHeight;await wait(dt,tok);}
+      tick();await wait(300,tok);
+      input.className='inputbar';input.textContent='Ask Copilot…';
+      msgs.insertAdjacentHTML('beforeend','<div class="bub-u">'+esc(p)+'</div><div class="chips"></div>');tick();
+      var chips=msgs.querySelector('.chips');
+      for(var c=0;c<s.chips.length;c++){chips.insertAdjacentHTML('beforeend','<div class="chip run"><span class="ck"></span>'+s.chips[c]+'</div>');await wait(650,tok);chips.lastChild.className='chip done';tick();}
+      var reply=document.createElement('div');reply.className='reply';msgs.appendChild(reply);
+      for(var b=0;b<s.reply.length;b++){
+        var blk=s.reply[b];
+        if(blk[0]==='p'||blk[0]==='warn'){
+          var el=document.createElement('p');if(blk[0]==='warn')el.className='warn';reply.appendChild(el);
+          var words=strip(blk[1]).split(' ');for(var w=0;w<words.length;w+=3){el.textContent=words.slice(0,w+3).join(' ');await wait(28,tok);}
+          el.innerHTML=fmt(blk[1]);
+        }else if(blk[0]==='ul'){
+          var ul=document.createElement('ul');reply.appendChild(ul);
+          for(var li=0;li<blk[1].length;li++){var l=document.createElement('li');ul.appendChild(l);var ws=strip(blk[1][li]).split(' ');for(var q=0;q<ws.length;q+=3){l.textContent=ws.slice(0,q+3).join(' ');await wait(26,tok);}l.innerHTML=fmt(blk[1][li]);}
+        }else{reply.insertAdjacentHTML('beforeend',blockHTML(blk));await wait(350,tok);}
+        tick();
+      }
+      for(var r=0;r<rvs.length;r++){rvs[r].classList.remove('pending');await wait(170,tok);if(r%3===2)tick();}
+      done();
+    }catch(e){}
+  })();
+}
+
+/* ---------------------------------------------------------------- copy + clicks */
+var toastEl=document.getElementById('toast'),tt;
+function toast(m){toastEl.textContent=m;toastEl.classList.add('show');clearTimeout(tt);tt=setTimeout(function(){toastEl.classList.remove('show');},1600);}
+function copyString(t,el){
+  function sel(){if(el){var r=document.createRange();r.selectNodeContents(el);var s=window.getSelection();s.removeAllRanges();s.addRange(r);toast('Selected. Press Ctrl+C to copy');}else toast('Open the card to copy');}
+  try{navigator.clipboard.writeText(t).then(function(){toast('📋 Copied');},sel);}catch(err){sel();}
+}
+document.addEventListener('click',function(e){
+  var pb=e.target.closest('.sim-play');if(pb){play(pb.closest('.sim').getAttribute('data-sim'));return;}
+  var cb=e.target.closest('[data-copy]');if(cb){var id=cb.getAttribute('data-copy');var el=document.getElementById('p-'+id);copyString(el.textContent,el);return;}
+  var cr=e.target.closest('[data-copyraw]');if(cr){copyString(PROMPTS[cr.getAttribute('data-copyraw')],null);return;}
+  var op=e.target.closest('[data-open]');if(op){openThing(op.getAttribute('data-open'));return;}
+  var mo=e.target.closest('[data-more]');if(mo){openThing('more:'+mo.getAttribute('data-more'));return;}
+  var qm=e.target.closest('[data-q]');if(qm){openThing('q:'+qm.getAttribute('data-q'));}
+});
+
+/* ---------------------------------------------------------------- 4C habits */
+var C=[{k:"clarity",name:"🔭 Clarity",d:"Telescopic: zoom out. Microscopic: zoom in.",cls:"c-clarity"},{k:"coaching",name:"🧑‍🏫 Coaching",d:"Feedback, rehearsal, challenge.",cls:"c-coaching"},{k:"create",name:"✍️ Create",d:"First drafts from your sources.",cls:"c-create"},{k:"collab",name:"🤝 Collaboration",d:"Meetings, follow-ups, partners.",cls:"c-collab"}];
+var H=[
+ ["Natasha","clarity","Telescopic","Monday leadership brief","Copilot Chat","30–45 min/week","Summarise my last 7 days of email, Teams and meetings. List decisions waiting for me, open commitments I made, and anything about donors, the board or deadlines. Max 15 bullets with links."],
+ ["Natasha","clarity","Microscopic","Funding call deep dive","Researcher","1–2 hrs/call","Read /[call for proposals]. Summarise eligibility, deadlines, budget ceilings, evaluation criteria and required documents. List where we are a strong fit and where we have gaps."],
+ ["Natasha","coaching","","Board Q&A rehearsal","Copilot Chat","45–60 min/cycle","Act as a board member with a finance and legal background. Read /[board deck draft] and ask me the 8 toughest questions, one at a time. After each answer, tell me how to make it sharper."],
+ ["Natasha","create","","Board pack draft","PowerPoint","2–3 hrs/cycle","Create an 8-slide board update from /[board notes]: summary, finances, programme progress, risks, decisions required, next steps. Speaker notes on each slide; mark figures [CHECK]."],
+ ["Natasha","collab","","Meeting → actions","Teams → Outlook","15–20 min/meeting","Turn this meeting into a follow-up email: decisions, actions with owners and deadlines, open questions. Under 200 words."],
+ ["Rajitha","clarity","Telescopic","Finance request tracker","Copilot Chat","20–30 min/week","From my email and Teams in the last 14 days, list every finance request, payment, audit or donor-report item: who (role), what, deadline, replied or not. Sort by deadline."],
+ ["Rajitha","clarity","Microscopic","Donor agreement digest","Notebooks","1–3 hrs/agreement","From /[grant agreement], extract reporting deadlines, formats, eligible and ineligible costs, procurement thresholds, budget-flexibility rules and audit requirements, with clause references."],
+ ["Rajitha","coaching","","Excel skills coach","Excel","30–60 min/problem","I want to allocate shared costs across 3 grants using a % table and show totals per grant. Explain step by step which formulas or PivotTable to use, and why, so I can do it myself next time."],
+ ["Rajitha","create","","Finance SOP draft","Word","2–4 hrs/policy","Draft a Shared Cost Allocation SOP for a small grant-funded non-profit: purpose, scope, allocation methods, approval, audit documentation, review cycle. Mark anything that depends on donor rules [CHECK DONOR AGREEMENT]."],
+ ["Rajitha","collab","","Variance questions for programmes","Word + Teams","1–2 hrs/report","Draft the financial narrative from /[budget workbook] and /[report template], then list 5 questions I need the programme team to answer about the variances."],
+ ["Saranie","clarity","Telescopic","Programme roll-up","Copilot Chat","30–45 min/week","Summarise this week's emails, Teams posts and meeting notes about our programmes and partners. List progress, slipped activities, open partner requests and risks, by project."],
+ ["Saranie","clarity","Microscopic","Partner feedback themes","Notebooks","1–2 hrs/event","From /[anonymised workshop feedback], identify the 5 main themes with a short supporting point each, and suggestions for the next workshop."],
+ ["Saranie","coaching","","Theory-of-change challenge","Copilot Chat","30–60 min/session","Act as a donor M&E specialist. Test each link from activity to outcome in /[results framework], point out weak assumptions and suggest better indicators."],
+ ["Saranie","create","","Activity report draft","Word","1–3 hrs/report","Draft the quarterly activity report from /[workplan] and /[meeting notes]: activities completed, outputs, delays with reasons, next quarter plan. Mark indicator values [CHECK]."],
+ ["Saranie","collab","","Partner coordination","Outlook","15–30 min/week","Draft an email to our outreach partner confirming dates, venues and responsibilities for the next community event, based on the last meeting recap. Add a who-does-what-by-when table."],
+ ["Minuri","clarity","Telescopic","Literature landscape","Researcher","2–4 hrs/topic","See the Clarity lab for four research-grade Researcher prompts. Quick version: Find recent research on public attitudes to reconciliation in post-conflict societies, focusing on South Asia. Summarise findings and methods with citations; flag peer-reviewed sources."],
+ ["Minuri","clarity","Microscopic","Significance across rounds","Analyst","1–2 days/analysis","See the Clarity lab. Quick version: Using /[aggregated tables by round], test which changes are statistically significant (design effect 1.3), show 95% CIs and draw a forest chart."],
+ ["Minuri","coaching","","Methods peer review","Copilot Chat","1 hr/paper","Act as a peer reviewer for a social science journal. Review the methods in /[draft]: sampling, validity, limitations, ethics. List what a reviewer would ask us to add."],
+ ["Minuri","create","","Report → policy brief","Word","2–4 hrs/brief","Turn /[published report chapter] into a 2-page policy brief for officials: key finding, why it matters, 3 recommendations, one chart suggestion. Only source figures, each marked [CHECK]."],
+ ["Minuri","collab","","Media pack + languages","Word","2–3 hrs/release","From /[policy brief], draft a press release, 3 LinkedIn and 3 X posts, then Sinhala and Tamil drafts of the release marked DRAFT FOR TRANSLATOR REVIEW."]];
+var HABY={};
+var hg=document.getElementById('habits');
+hg.innerHTML=C.map(function(c){
+  return '<div class="ccol"><div class="ccol-h '+c.cls+'"><h3>'+c.name+'</h3><p>'+c.d+'</p></div>'+
+   H.filter(function(h){return h[1]===c.k;}).map(function(h,i){var id='h-'+c.k+'-'+i;HABY[id]=h;PROMPTS[id]=h[6];return '<div class="habit" data-person="'+h[0]+'">'+(h[2]?'<span class="mode">'+(h[2]==='Telescopic'?'🔭 ':'🔬 ')+h[2]+'</span>':'')+'<h4>'+h[3]+'</h4><div class="tags"><span class="tag">'+h[0]+'</span><span class="tag coral">⏱ '+h[5]+'</span></div><div class="actions"><button class="btn" type="button" data-open="habit:'+id+'">👁 Prompt</button><button class="btn ghost" type="button" data-copyraw="'+id+'">📋 Copy</button></div></div>';}).join('')+'</div>';
+}).join('');
+[].forEach.call(document.querySelectorAll('.fbtn[data-person]'),function(b){b.addEventListener('click',function(){
+  var p=b.getAttribute('data-person');[].forEach.call(document.querySelectorAll('.fbtn[data-person]'),function(x){x.setAttribute('aria-pressed',x===b?'true':'false');});
+  [].forEach.call(hg.querySelectorAll('.habit'),function(h){h.hidden=!(p==='all'||h.getAttribute('data-person')===p);});
+});});
+
+/* ---------------------------------------------------------------- roadmap */
+var Q=[
+ {q:"Q1",when:"Nov – Jan",name:"🧱 Foundation",goal:"Safe tenant, trained team, first habits.",
+  items:[["governance","AI use policy","Natasha · Sahan"],["governance","Data map + over-sharing review","Sahan · Hashan"],["governance","Sensitivity labels","Sahan · Hashan"],["finance","Budget + allocation templates","Rajitha"],["finance","Interim report with Copilot","Rajitha · Saranie"],["agents","Grant Compliance + Copilot Coach agents","Rajitha · Sahan"],["leadership","Monday brief + board deck habits","Natasha"]],
+  kpi:["100% of licensed users trained","≥70% weekly active","Baselines recorded","Zero identifiable datasets in reach"],risk:["Over-sharing surfaces sensitive files → fix permissions first","Thin tenant data → use the demo pack"]},
+ {q:"Q2",when:"Feb – Apr",name:"📈 Scale",goal:"Shared agents and automated routines.",
+  items:[["agents","SLB Knowledge agent","Saranie · Minuri"],["agents","Month-End Close + Finance Helpdesk agents","Rajitha"],["finance","Power Automate approvals","Rajitha"],["finance","Deadline reminders","Rajitha"],["leadership","Board Secretary agent","Natasha"],["research","Literature Scout agent","Minuri"]],
+  kpi:["5 agents used weekly","3+ automated flows","Month-end close time down"],risk:["Outdated agent sources → quarterly review","Eligibility answers are guidance only","Payment flows keep a human approval"]},
+ {q:"Q3",when:"May – Jul",name:"🔬 Research engine",goal:"Clarity lab in daily use; publication pipeline.",
+  items:[["research","Researcher + Analyst protocol (Clarity lab)","Minuri"],["research","Qual Coding + Methods & Ethics agents","Minuri"],["research","Report → brief → media → languages","Saranie"],["finance","Donor reporting pipeline","Rajitha · Saranie"],["governance","Ethics review of AI in research","Natasha · advisors"]],
+  kpi:["Brief turnaround vs baseline","Donor report hours vs baseline","100% documented human review"],risk:["Invented quotes → trace every excerpt","Translation errors → native-speaker review"]},
+ {q:"Q4",when:"Aug – Oct",name:"🚀 Transform",goal:"External reach, new funding, next SLB round.",
+  items:[["agents","Ask the Barometer (public)","Natasha · Trident"],["agents","Proposal Builder agent","Natasha · Saranie"],["leadership","3+ new funders approached","Natasha"],["research","Impact dashboard","Saranie"],["research","Next SLB round preparation","Minuri · Saranie"],["governance","Year-1 review, Year-2 plan","Sahan · Natasha"]],
+  kpi:["Proposals submitted + win rate","Public agent accuracy checks","≥80% weekly active"],risk:["Public agent misquotes → published sources only, 50+ tests, monthly review","Copilot Studio usage capped"]}];
+var qg=document.getElementById('qgrid');
+qg.innerHTML=Q.map(function(q){
+  QMORE[q.q]={t:q.q+' · '+q.name+' — KPIs and guardrails',h:'<div class="mgrid"><div class="box"><h4>📏 KPIs</h4><ul class="clean">'+q.kpi.map(function(k){return '<li>'+k+'</li>';}).join('')+'</ul></div><div class="box"><h4>🛡️ Risks &amp; guardrails</h4><ul class="clean">'+q.risk.map(function(k){return '<li>'+k+'</li>';}).join('')+'</ul></div></div>'};
+  return '<div class="q"><div class="q-h"><span class="eyebrow">'+q.q+' · '+q.when+'</span><h3>'+q.name+'</h3><p class="q-goal">'+q.goal+'</p></div><div class="q-items">'+q.items.map(function(i){return '<div class="item" data-area="'+i[0]+'"><span>'+i[1]+'</span><small>👤 '+i[2]+'</small></div>';}).join('')+'</div><div class="q-foot"><button class="btn ghost" type="button" data-q="'+q.q+'">📏 KPIs &amp; guardrails →</button></div></div>';}).join('');
+[].forEach.call(document.querySelectorAll('#rfilters .fbtn'),function(b){b.addEventListener('click',function(){
+  var a=b.getAttribute('data-area');[].forEach.call(document.querySelectorAll('#rfilters .fbtn'),function(x){x.setAttribute('aria-pressed',x===b?'true':'false');});
+  [].forEach.call(qg.querySelectorAll('.item'),function(i){i.classList.toggle('dim',!(a==='all'||i.getAttribute('data-area')===a));});
+});});
+
+/* ---------------------------------------------------------------- router */
+var PAGES=[].map.call(document.querySelectorAll('[data-page]'),function(p){return p.getAttribute('data-page');});
+function show(){
+  if(!modal.hidden)closeModal();
+  var h=(location.hash||'').slice(1),page=h,target=null;
+  if(PAGES.indexOf(h)<0){var el=h&&document.getElementById(h);var pg=el&&el.closest('[data-page]');if(pg){page=pg.getAttribute('data-page');target=el;}else page='overview';}
+  [].forEach.call(document.querySelectorAll('[data-page]'),function(p){p.hidden=p.getAttribute('data-page')!==page;});
+  [].forEach.call(document.querySelectorAll('.nav a'),function(a){if(a.getAttribute('href')==='#'+page)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current');});
+  if(target)target.scrollIntoView();else window.scrollTo(0,0);
+}
+window.addEventListener('hashchange',show);show();
+
+/* ---------------------------------------------------------------- theme */
+document.getElementById('themebtn').addEventListener('click',function(){
+  var r=document.documentElement,cur=r.getAttribute('data-theme');
+  var dark=cur?cur==='dark':window.matchMedia('(prefers-color-scheme: dark)').matches;
+  r.setAttribute('data-theme',dark?'light':'dark');
+  try{localStorage.setItem('ip-theme',dark?'light':'dark');}catch(e){}
+});
+try{var st=localStorage.getItem('ip-theme');if(st)document.documentElement.setAttribute('data-theme',st);}catch(e){}
+})();
+</script>
+
+</body></html>
